@@ -59,7 +59,7 @@ public:
 
 	template< typename TGeometryRenderFunctor >
 	void
-	ExecuteTechniquePass( std::string aTechniqueName, TGeometryRenderFunctor aDrawGeometry );
+	executeTechniquePass( std::string aTechniqueName, TGeometryRenderFunctor aDrawGeometry );
 
 	template< size_t Dim >
 	void

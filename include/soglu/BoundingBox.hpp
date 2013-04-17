@@ -7,6 +7,8 @@
 #include <glm/gtc/type_precision.hpp>
 //#include <glm/ext.hpp>
 
+#include <soglu/Primitives.hpp>
+
 namespace soglu {
 
 struct BoundingBox3D
@@ -52,6 +54,63 @@ operator<<( std::ostream & s, const BoundingBox3D &aBBox )
 //	s << "BBox3d[ " << aBBox.getMin() << "; "  << aBBox.getMin() << " ]";
 	return s;
 }*/
+
+void
+getBBoxMinMaxDistance( 
+			const BoundingBox3D	&bbox, 
+			const glm::fvec3 	&eyePoint, 
+			const glm::fvec3  	&direction, 
+			float 			&min, 
+			float 			&max,
+		       	unsigned		&minId,
+		       	unsigned		&maxId
+			);
+
+unsigned
+getPlaneVerticesInBoundingBox( 
+		const BoundingBox3D	&bbox, 
+		const glm::fvec3 	&planePoint, 
+		const glm::fvec3 	&planeNormal,
+		unsigned			minId,
+	       	glm::fvec3 		vertices[]
+		);
+
+
+unsigned
+getPlaneVerticesInBoundingBox( 
+		const soglu::BoundingBox3D		&bbox, 
+		const glm::fvec3 	&planePoint, 
+		const glm::fvec3 	&planeNormal,
+		unsigned			minId,
+	       	glm::fvec3 		vertices[]
+		);
+
+unsigned
+getPlaneVerticesInBoundingBox( 
+		const soglu::BoundingBox3D		&bbox, 
+		const soglu::Planef			&plane,
+		unsigned			minId,
+	       	glm::fvec3 		vertices[]
+		);
+
+unsigned
+getPlaneVerticesInBoundingBox( 
+		const soglu::BoundingBox3D		&bbox, 
+		const soglu::Planef			&plane,
+	       	glm::fvec3 		vertices[]
+		);
+
+/*size_t
+fillPlaneBBoxIntersectionBufferFill(
+		const BoundingBox3D	&bbox,
+		const Camera		&camera,
+		unsigned 		numberOfSteps,
+		Vector3f		*vertices,
+		unsigned		*indices,
+		float			cutPlane,
+		unsigned		primitiveRestart
+		);*/
+
 
 } //namespace soglu
 

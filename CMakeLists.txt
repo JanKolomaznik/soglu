@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS} "include")
 
 SET(${PROJECT_NAME}_SOURCES 
 	"src/CgFXShader.cpp" 
+	"src/OGLTools.cpp" 
 	)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES})

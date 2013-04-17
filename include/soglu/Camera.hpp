@@ -1,6 +1,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "soglu/ACamera.h"
+
+namespace soglu {
 
 struct CameraTraits
 {
@@ -9,12 +12,20 @@ struct CameraTraits
 };
 
 template<typename TTraits = CameraTraits>
-class PerspectiveCamera
+class PerspectiveCamera: public ACamera
 {
 public:
+	
+	void
+	setFieldOfView(float aAngle);
 
 protected:
-	typename TTraits::Direction mUpDirection;
-	typename TTraits::Direction mRightDirection;
-	typename TTraits::Direction mTargetDirection;
+	//typename TTraits::Direction mUpDirection;
+	//typename TTraits::Direction mRightDirection;
+	//typename TTraits::Direction mTargetDirection;
 };
+
+typedef PerspectiveCamera<> Camera;
+typedef PerspectiveCamera<> OrthoCamera;
+
+} //namespace soglu

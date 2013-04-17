@@ -1,7 +1,9 @@
 #pragma once
 
-inline void 
-checkForGLError(const std::string &situation){}
+#include <string>
+#include <GL/glew.h>
+#include <boost/shared_array.hpp>
+
 
 //#ifdef DEBUG_LEVEL
 //#define GL_CHECKED_CALL( ... ) { __VA_ARGS__ ; checkForGLError( TO_STRING( __FILE__ " on " << __LINE__) ); }
@@ -11,6 +13,10 @@ checkForGLError(const std::string &situation){}
 
 namespace soglu {
 
+inline void 
+checkForGLError(const std::string &situation){}
+	
+	
 struct GLPushAtribs
 {
 	GLPushAtribs(GLbitfield attribs = GL_ALL_ATTRIB_BITS )
@@ -40,5 +46,17 @@ struct GLPushMatrices
 		GL_CHECKED_CALL( glPopMatrix() );
 	}
 };
+
+inline bool
+isGLContextActive()
+{
+	return true;//return QGLContext::currentContext() != NULL; //TODO
+}
+
+void
+initOpenGL();
+
+void
+getImageBufferFromTexture(size_t &aWidth, size_t &aHeight, boost::shared_array< uint8_t > &aBuffer, GLuint aTexture);
 
 } //namespace soglu

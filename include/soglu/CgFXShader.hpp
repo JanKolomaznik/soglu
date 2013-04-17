@@ -17,15 +17,17 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 
 #include "soglu/GLViewSetup.hpp"
 #include "soglu/BoundingBox.hpp"
 #include "soglu/Primitives.hpp"
 #include "soglu/OGLTools.hpp"
+#include "soglu/GLTextureImage.hpp"
 
-#define D_PRINT(ARG)
-#define LOG(ARG)
+#define SOGLU_D_PRINT(ARG)
+#define SOGLU_LOG(ARG)
 
 
 class RAII : private boost::noncopyable
@@ -202,13 +204,13 @@ public:
 
 	void
 	setParameter(std::string aName, const Planef &aPlane);
-	/*
+	
 	void
 	setParameter(std::string aName, const GLTextureImage &aTexture);
 
 	void
 	setParameter(std::string aName, const GLTextureImage3D &aImage);
-
+	/*
 	void
 	setParameter(std::string aName, const GLTransferFunctionBuffer1D &aTransferFunction);
 	
@@ -288,6 +290,18 @@ namespace detail {
 	//-------------------------------------------------------------------------
 
 	inline void
+	parameterSetter(CGparameter aParameter, const glm::fvec2 &aVec2)
+	{
+		cgSetParameterValuefr(aParameter, 2, glm::value_ptr(aVec2));
+	}
+
+	inline void
+	parameterSetter(CGparameter aParameter, const glm::dvec2 &aVec2)
+	{
+		cgSetParameterValuedr(aParameter, 2, glm::value_ptr(aVec2));
+	}
+	
+	inline void
 	parameterSetter(CGparameter aParameter, const glm::fvec3 &aVec3)
 	{
 		cgSetParameterValuefr(aParameter, 3, glm::value_ptr( aVec3 ));
@@ -314,6 +328,15 @@ namespace detail {
 		cgSetParameterValueir(aParameter, tDim, aValue.GetData());
 	}*/
 
+	template<typename TParameterType>
+	inline void
+	setCgFXParameter(CGeffect &aEffect, std::string aName, const TParameterType &aValue)
+	{
+		//SOGLU_ASSERT(isInitialized());
+		CGparameter cgParameter = cgGetNamedEffectParameter(aEffect, aName.data() );
+		detail::parameterSetter(cgParameter, aValue);
+	}
+
 
 } //namespace detail
 
@@ -322,10 +345,10 @@ template<typename TParameterType>
 void
 CgFXShader::setParameter(std::string aName, const TParameterType &aValue)
 {
+	using namespace soglu::detail;
 	//SOGLU_ASSERT(isInitialized());
-	CGparameter cgParameter = cgGetNamedEffectParameter( mCgEffect->get(), aName.data() );
 
-	detail::parameterSetter(cgParameter, aValue);
+	setCgFXParameter(mCgEffect->get(), aName, aValue);
 }
 
 template<typename TParameterType>
@@ -349,14 +372,14 @@ CgFXShader::setParameter( std::string aName, const GLViewSetup &aViewSetup )
 }
 
 inline void
-CgFXShader::setParameter( std::string aName, const Planef &aPlane )
+CgFXShader::setParameter( std::string aName, const soglu::Planef &aPlane )
 {
 	assert(isInitialized());
 	setParameter(aName + ".point",aPlane.point());
 
 	setParameter(aName + ".normal", aPlane.normal());
 }
-/*
+
 inline void
 CgFXShader::setParameter( std::string aName, const GLTextureImage &aTexture )
 {
@@ -370,15 +393,15 @@ CgFXShader::setParameter( std::string aName, const GLTextureImage3D &aImage )
 	assert(isInitialized());
 	setTextureParameter(aName + ".data", aImage.GetTextureGLID() );
 
-	setParameter(aName + ".size", aImage.getExtents().maximum - aImage.getExtents().minimum );
+	/*setParameter(aName + ".size", aImage.getExtents().maximum - aImage.getExtents().minimum ); //TODO
 
 	setParameter(aName + ".realSize", aImage.getExtents().realMaximum - aImage.getExtents().realMinimum );
 
 	setParameter(aName + ".realMinimum", aImage.getExtents().realMinimum );
 
-	setParameter(aName + ".realMaximum", aImage.getExtents().realMaximum );
+	setParameter(aName + ".realMaximum", aImage.getExtents().realMaximum );*/
 }
-
+/*
 inline void
 CgFXShader::setParameter(std::string aName, const GLTransferFunctionBuffer1D &aTransferFunction )
 {

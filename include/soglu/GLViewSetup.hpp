@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 //#include <glm/ext.hpp>
 
+#include "soglu/Camera.hpp"
+
 namespace soglu {
 
 class GLException
@@ -26,5 +28,14 @@ struct GLViewSetup
 	glm::dmat4x4 projection;
 	glm::ivec4  viewport;
 };
+
+void 
+getCurrentGLSetup( soglu::GLViewSetup &aSetup );
+
+GLViewSetup
+getViewSetupFromCamera( const Camera &camera );
+
+GLViewSetup
+getViewSetupFromOrthoCamera( const OrthoCamera &camera );
 
 } //namespace soglu

@@ -3,12 +3,12 @@
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <boost/format.hpp>
 
-#ifdef DISABLE_0
 
 namespace soglu
 {
-
+#ifdef DISABLE_0
 void 
 getCurrentGLSetup(soglu::GLViewSetup &aSetup)
 {
@@ -112,14 +112,18 @@ getImageBufferFromTexture( uint32 &aWidth, uint32 &aHeight, boost::shared_array<
 	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
 }
 
+#endif //DISABLE_0
+
 void
 initOpenGL()
 {
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
-		throw EInitError( "GLEW" );
+		throw "EInitError";//( "GLEW" );
 	}
-	LOG( "Status: Using GLEW " << glewGetString(GLEW_VERSION) );
+	
+	std::cout << boost::format("Status: Using GLEW %1%\n") % glewGetString(GLEW_VERSION);
+	/*LOG( "Status: Using GLEW " << glewGetString(GLEW_VERSION) );
 	LOG( "\tGLEW_VERSION_1_1 " << ((GLEW_VERSION_1_1) ? std::string("OK") : std::string("FAIL")) );
 	LOG( "\tGLEW_VERSION_1_2 " << ((GLEW_VERSION_1_2) ? std::string("OK") : std::string("FAIL")) );
 	LOG( "\tGLEW_VERSION_1_3 " << ((GLEW_VERSION_1_3) ? std::string("OK") : std::string("FAIL")) );
@@ -129,10 +133,29 @@ initOpenGL()
 	LOG( "\tGLEW_VERSION_2_1 " << ((GLEW_VERSION_2_1) ? std::string("OK") : std::string("FAIL")) );
 	LOG( "\tGLEW_VERSION_3_0 " << ((GLEW_VERSION_3_0) ? std::string("OK") : std::string("FAIL")) );
 	LOG( "\tGLEW_VERSION_3_1 " << ((GLEW_VERSION_3_1) ? std::string("OK") : std::string("FAIL")) );
-	LOG( "\tGLEW_VERSION_3_2 " << ((GLEW_VERSION_3_2) ? std::string("OK") : std::string("FAIL")) );
+	LOG( "\tGLEW_VERSION_3_2 " << ((GLEW_VERSION_3_2) ? std::string("OK") : std::string("FAIL")) );*/
 }
 
+void
+getImageBufferFromTexture(size_t &aWidth, size_t &aHeight, boost::shared_array< uint8_t > &aBuffer, GLuint aTexture)
+{
+	GLint width = 0;
+	GLint height = 0;
+	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, aTexture ) );
+	GL_CHECKED_CALL( glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width ) );
+	GL_CHECKED_CALL( glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height ) );
 
-} /*namespace M4D*/
+	aBuffer = boost::shared_array< uint8_t >( new uint8_t[ 3 * width * height ] );
 
-#endif //DISABLE_0
+	GL_CHECKED_CALL( glGetTexImage(	
+				GL_TEXTURE_2D, 
+				0, 
+				GL_RGB, 
+				GL_UNSIGNED_BYTE, 
+				(void*)aBuffer.get()
+				) );
+	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
+}
+
+} /*namespace soglu*/
+

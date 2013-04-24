@@ -1,4 +1,5 @@
-#include "MedV4D/GUI/utils/OGLDrawing.h"
+#include <soglu/OGLDrawing.hpp>
+#include <soglu/OGLTools.hpp>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -8,6 +9,90 @@
 #include <GL/glu.h>
 #endif
 
+namespace soglu {
+	
+
+void
+drawTexturedQuad( const glm::fvec2 &point1, const glm::fvec2 &point3 )
+{
+	glm::fvec2 point2(point3[0], point1[1]);
+	glm::fvec2 point4(point1[0], point3[1]);
+
+	// draw surface and map texture on it
+	glBegin( GL_QUADS );
+		glTexCoord2d( 0.0, 0.0 ); 
+		GLVertexVector( point1 );
+
+		glTexCoord2d( 1.0, 0.0 ); 
+		GLVertexVector( point2 );
+
+		glTexCoord2d( 1.0, 1.0 ); 
+		GLVertexVector( point3 );
+
+		glTexCoord2d( 0.0, 1.0 );
+		GLVertexVector( point4 );
+	glEnd();
+}
+
+void
+drawRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3)
+{
+	glm::fvec2 point2(point3[0], point1[1]);
+	glm::fvec2 point4(point1[0], point3[1]);
+
+	// draw surface and map texture on it
+	glBegin( GL_LINE_LOOP );
+		GLVertexVector(point1);
+
+		GLVertexVector(point2);
+
+		GLVertexVector(point3);
+
+		GLVertexVector(point4);
+	glEnd();
+}
+
+void
+drawBoundingBox(const BoundingBox3D &aBBox)
+{
+	glBegin( GL_LINE_LOOP );
+		GLVertexVector( aBBox.vertices[0] );
+		GLVertexVector( aBBox.vertices[1] );
+		GLVertexVector( aBBox.vertices[2] );
+		GLVertexVector( aBBox.vertices[3] );
+		GLVertexVector( aBBox.vertices[7] );
+		GLVertexVector( aBBox.vertices[6] );
+		GLVertexVector( aBBox.vertices[5] );
+		GLVertexVector( aBBox.vertices[4] );
+	glEnd();
+	glBegin( GL_LINES );
+		GLVertexVector( aBBox.vertices[0] );
+		GLVertexVector( aBBox.vertices[3] );
+
+		GLVertexVector( aBBox.vertices[1] );
+		GLVertexVector( aBBox.vertices[5] );
+
+		GLVertexVector( aBBox.vertices[2] );
+		GLVertexVector( aBBox.vertices[6] );
+
+		GLVertexVector( aBBox.vertices[4] );
+		GLVertexVector( aBBox.vertices[7] );
+	glEnd();
+}
+
+void
+drawPolygon(const glm::fvec3 aVertices[], size_t aCount)
+{
+	glBegin( GL_LINE_LOOP );
+		for(size_t j = 0; j < aCount; ++j) {
+			GLVertexVector(aVertices[j]);
+		}
+	glEnd();
+}
+
+} //namespace soglu
+
+#ifdef DISABLE_0
 
 namespace M4D
 {
@@ -592,28 +677,6 @@ GLPrepareTextureFromMaskData( const M4D::Imaging::AImageRegionDim< 2 > &image, b
 }
 
 void
-GLDrawTexturedQuad( const Vector< float, 2 > &point1, const Vector< float, 2 > &point3 )
-{
-	Vector< float, 2 > point2( point3[0], point1[1] );
-	Vector< float, 2 > point4( point1[0], point3[1] );
-
-	// draw surface and map texture on it
-	glBegin( GL_QUADS );
-		glTexCoord2d( 0.0, 0.0 ); 
-		GLVertexVector( point1 );
-
-		glTexCoord2d( 1.0, 0.0 ); 
-		GLVertexVector( point2 );
-
-		glTexCoord2d( 1.0, 1.0 ); 
-		GLVertexVector( point3 );
-
-		glTexCoord2d( 0.0, 1.0 );
-		GLVertexVector( point4 );
-	glEnd();
-}
-
-void
 GLDrawBoundingBox( const BoundingBox3D &aBBox )
 {
 	glBegin( GL_LINE_LOOP );
@@ -710,7 +773,7 @@ GLDrawBox( const Vector< float, 3 > &corner1, const Vector< float, 3 > &corner2 
 		GLVertexVector( v1 );
 	glEnd();
 }
-
+/*
 void
 drawCircle( float32 radius, size_t segCount )
 {
@@ -831,8 +894,8 @@ drawCylinder( Vector3f aBaseCenter, Vector3f aBaseNormal, float radius, float he
 
 	drawCylinder( radius, height );
 	glPopMatrix();
-}
-
+}*/
+/*
 void
 drawSphericalCap( float aBaseRadius, float aHeight )
 {
@@ -1002,7 +1065,8 @@ drawGrid( const Vector3f &aCenter, const Vector3f &aVDirection, const Vector3f &
 	glEnd();
 	GL_CHECKED_CALL( glLineWidth( 1.0f ) );
 }
-
+*/
 
 } /*namespace M4D*/
 
+#endif //DISABLE_0

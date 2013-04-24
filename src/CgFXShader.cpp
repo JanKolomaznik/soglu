@@ -84,10 +84,14 @@ CgFXShader::finalize()
 void 
 checkForCgError( const std::string &situation, CGcontext &context  )
 {
-	CGerror error;
-	std::string errString = cgGetLastErrorString(&error);
-
+	CGerror error = cgGetError();
 	if (error != CG_NO_ERROR) {
+		std::string errString;
+		const char *msg = cgGetLastErrorString(&error);
+		if (msg) {
+			errString = msg;
+		}
+		
 		std::string message = situation + errString;
 		const char *listing = cgGetLastListing(context);
 		if( listing ) {

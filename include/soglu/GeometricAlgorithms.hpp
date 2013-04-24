@@ -1,7 +1,8 @@
-aendif /*GEOMETRIC_ALGORITHMS*/ once
+#pragma once
 
 #include <cmath>
 #include <soglu/Primitives.hpp>
+#include <soglu/OGLTools.hpp>
 #include <ostream>
 #include <iomanip>
 
@@ -455,30 +456,72 @@ closestPointsOnTwoLines(
 		const glm::fvec3 &v1,
 		const glm::fvec3 &A2, 
 		const glm::fvec3 &v2,
-		CoordType &t1,
-		CoordType &t2
+		float &t1,
+		float &t2
 		)
 {
-	Vector< CoordType, 3 > u = A1 - A2;
-	CoordType v1sq = v1*v1;
-	CoordType v2sq = v2*v2;
-	CoordType v1v2 = v1*v2;
-	CoordType v1u = v1*u;
-	CoordType v2u = v2*u;
+	glm::fvec3 u = A1 - A2;
+	float v1sq = glm::dot(v1, v1);
+	float v2sq = glm::dot(v2, v2);
+	float v1v2 = glm::dot(v1, v2);
+	float v1u = glm::dot(v1, u);
+	float v2u = glm::dot(v2, u);
 
-	CoordType detA = v1sq * v2sq - v1v2*v1v2;
-	if ( detA < Epsilon ) {
-		t1 = t2 = static_cast<CoordType>(0);
+	float detA = v1sq * v2sq - v1v2*v1v2;
+	if ( detA < 0.000000001f) {
+		t1 = t2 = static_cast<float>(0);
 		return false;
 	}
-	CoordType det1 = -v1u*v2sq + v1v2*v2u;
-	CoordType det2 = -v1sq*v2u + v1u*v1v2;
+	float det1 = -v1u*v2sq + v1v2*v2u;
+	float det2 = -v1sq*v2u + v1u*v1v2;
 
 	t1 = det1/detA;
 	t2 = det2/detA;
 
 	return true;
 }
+
+enum IntersectionResult {
+	ie_NO_INTERSECTION	= 0,
+	ie_UNIQUE_INTERSECTION	= 1,
+	ie_WHOLE_INSIDE		= 2
+};
+
+inline IntersectionResult
+lineSegmentPlaneIntersection( 
+		const glm::fvec3	&lineA, 
+		const glm::fvec3	&lineB,
+		const glm::fvec3	&planePoint, 
+		const glm::fvec3	&planeNormal,
+		glm::fvec3	&intersection
+		)
+{
+	glm::fvec3 u( lineB - lineA );
+	glm::fvec3 w( lineA - planePoint );
+
+	intersection = glm::fvec3();
+
+	float D = glm::dot(planeNormal, u);
+	float N = glm::dot(-planeNormal, w);
+
+	if ( abs(D) < 0.000000001f ) {          // segment is parallel to plane
+		if ( abs(N) < 0.000000001f ) {                   // segment lies in plane
+		    return ie_WHOLE_INSIDE;
+		} else {
+		    return ie_NO_INTERSECTION;                   // no intersection
+		}
+	}
+	// they are not parallel
+	// compute intersect param
+	float sI = N / D;
+	if (sI < 0 || sI > 1) {
+		return ie_NO_INTERSECTION;                       // no intersection
+	}
+
+	intersection = lineA + sI * u;                 // compute segment intersect point
+	return ie_UNIQUE_INTERSECTION;
+}
+
 
 /** @} */
 

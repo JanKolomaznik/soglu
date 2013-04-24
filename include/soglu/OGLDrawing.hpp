@@ -18,6 +18,21 @@
 
 namespace soglu {
 
+void
+drawBoundingBox(const BoundingBox3D &aBBox);
+
+void
+drawTexturedQuad(const glm::fvec2 &point1, const glm::fvec2 &point3);
+
+void
+drawRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3);
+
+void
+drawCylinder(const glm::fvec3 &aBaseCenter, const glm::fvec3 &aBaseNormal, float radius, float height);
+
+void
+drawPolygon(const glm::fvec3 aVertices[], size_t aCount);
+	
 
 /*void
 SetToViewConfiguration2D( const ViewConfiguration2D &config );
@@ -167,20 +182,7 @@ template< typename VectorType >
 void
 GLDrawPointSetLines( const M4D::Imaging::Geometry::PointSet< VectorType > &pointset, bool closed = false );
 */
-void
-GLDrawBoundingBox( const BoundingBox3D &aBBox );
 
-void
-GLDrawTexturedQuad( const glm::fvec2 &corner1, const glm::fvec2 &corner2 );
-
-void
-drawRectangle( const glm::fvec2 &corner1, const glm::fvec2 &corner2 );
-
-void
-drawCylinder(const glm::fvec3 &aBaseCenter, const glm::fvec3 &aBaseNormal, float radius, float height);
-
-void
-drawPolygon(const glm::fvec3 aVertices[], size_t aCount);
 /*void
 GLDrawBoundingBox( const Vector< float, 3 > &corner1, const Vector< float, 3 > &corner2 );
 

@@ -73,7 +73,7 @@ public:
 
 		GL_CHECKED_CALL( gluOrtho2D( 0, (float32)mSize[0], 0, (float32)mSize[1] ) );
 
-		GLDrawTexturedQuad(
+		drawTexturedQuad(
 			glm::fvec2( 0.0f, 0.0f ), 
 			glm::fvec2( (float32)mSize[0], (float32)mSize[1] )
 			);
@@ -144,11 +144,11 @@ public:
 
 		GL_CHECKED_CALL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ) );
 
-		mSize[ 0 ] = aWidth;
-		mSize[ 1 ] = aHeight;
+		mSize.x = aWidth;
+		mSize.y = aHeight;
 	}
 
-	Vector2u
+	glm::uvec2
 	GetSize()const
 	{ return mSize; }
 
@@ -161,7 +161,7 @@ protected:
 		mColorTexture;
 	bool mInitialized;
 	bool mBinded;
-	Vector2u mSize;
+	glm::uvec2 mSize;
 };
 
 } /*namespace soglu*/

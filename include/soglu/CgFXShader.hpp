@@ -213,10 +213,10 @@ public:
 	/*
 	void
 	setParameter(std::string aName, const GLTransferFunctionBuffer1D &aTransferFunction);
-	
+	*/
 	void
 	setParameter(std::string aName, const Camera &aCamera);
-	*/
+
 	template< typename TGeometryRenderFunctor >
 	void
 	executeTechniquePass( std::string aTechniqueName, TGeometryRenderFunctor aDrawGeometry );
@@ -412,7 +412,7 @@ CgFXShader::setParameter(std::string aName, const GLTransferFunctionBuffer1D &aT
 
 	setParameter(aName + ".sampleCount", aTransferFunction.getSampleCount() );
 }
-
+*/
 inline void
 CgFXShader::setParameter(std::string aName, const Camera &aCamera)
 {
@@ -422,7 +422,7 @@ CgFXShader::setParameter(std::string aName, const Camera &aCamera)
 	
 	setParameter(aName + ".upDirection", aCamera.upDirection());
 }
-*/
+
 inline void
 CgFXShader::setParameter(std::string aName, const BoundingBox3D &aValue)
 {

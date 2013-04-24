@@ -67,7 +67,16 @@ public:
 		{ return mTargetPos; }
 
 	void
-	setTargetPosition( const Position &pos );
+	setTargetPosition( const Position &pos )
+	{
+		mTargetPos = pos;
+		updateDistance();
+		updateTargetDirection();
+		
+		mUpDirection = glm::orthonormalize(mUpDirection, mTargetDirection);
+
+		updateRightDirection();
+	}
 
 	void
 	setTargetPosition( const Position &aPosition, const Position &aUpDirection );
@@ -76,7 +85,20 @@ public:
 	setEyePosition( const Position &pos );
 
 	void
-	setEyePosition( const Position &aPosition, const Position &aUpDirection );
+	setEyePosition( const Position &aPosition, const Position &aUpDirection )
+	{
+		mEyePos = aPosition;
+		updateDistance();
+		updateTargetDirection();
+
+		mUpDirection = aUpDirection;
+		glm::normalize(mUpDirection);
+		
+		mTargetDirection = glm::orthonormalize( mTargetDirection, mUpDirection );
+
+		updateRightDirection();
+
+	}
 
 	void
 	setUpDirection( const Direction & );
@@ -102,7 +124,7 @@ public:
 	SIMPLE_GET_SET_METHODS( FloatType, ZNear, mZNear );
 	SIMPLE_GET_SET_METHODS( FloatType, ZFar, mZFar );*/
 
-	void
+	/*void
 	rotateAroundTarget( const Quaternion<FloatType> &q );
 
 	void
@@ -115,7 +137,7 @@ public:
 	yawPitchAround( FloatType yangle, FloatType pangle );
 
 	void
-	yawPitchAbsolute( FloatType yangle, FloatType pangle );
+	yawPitchAbsolute( FloatType yangle, FloatType pangle );*/
 
 	
 protected:
@@ -169,8 +191,8 @@ operator<<( std::ostream & stream, ACamera & camera )
 	return stream;
 }
 
-void
-dollyCamera( ACamera &aCamera, float32 aRatio );
+/*void
+dollyCamera( ACamera &aCamera, float32 aRatio );*/
 
 
 #endif /*ACAMERA_H*/

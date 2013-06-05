@@ -23,4 +23,35 @@ struct GLMDimension<3>
 	typedef glm::ivec3 ivec;
 };
 
+template< typename CoordType >
+glm::detail::tvec2< CoordType >
+purgeDimension( const glm::detail::tvec3< CoordType > &u, size_t purgedDimension = 2 )
+{
+	glm::detail::tvec2< CoordType > data;
+	size_t j = 0;
+	for( size_t i=0; i < 3; ++i ) {
+		if( i != purgedDimension ) {
+			data[j++] = u[i];
+		}
+	}
+	return data;
+}
+
+template< typename CoordType >
+glm::detail::tvec3< CoordType >
+insertDimension( const glm::detail::tvec2< CoordType > &u, CoordType value, size_t insertedDimension = 2 )
+{
+
+	glm::detail::tvec3< CoordType > data;
+	size_t j = 0;
+	for( size_t i=0; i < 3; ++i ) {
+		if( i != insertedDimension ) {
+			data[i] = u[j++];
+		} else {
+			data[i] = value;
+		}
+	}
+	return data;
+}
+
 } //namespace soglu

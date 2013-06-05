@@ -5,7 +5,8 @@
 #include <glm/glm.hpp>
 //#include <glm/ext.hpp>
 
-#include "soglu/Camera.hpp"
+#include <soglu/Camera.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 namespace soglu {
 
@@ -28,6 +29,18 @@ struct GLViewSetup
 	glm::dmat4x4 projection;
 	glm::ivec4  viewport;
 };
+
+inline std::ostream &
+operator<<(std::ostream &aStream, const GLViewSetup &aSetup)
+{
+	aStream << "Model matrix: \n" << glm::to_string(aSetup.model) << std::endl;
+	aStream << "View matrix: \n" << glm::to_string(aSetup.view) << std::endl;
+	aStream << "Projection matrix: \n" << glm::to_string(aSetup.projection) << std::endl;
+	aStream << "Model-View matrix: \n" << glm::to_string(aSetup.modelView) << std::endl;
+	aStream << "Model-View-Projection matrix: \n" << glm::to_string(aSetup.modelViewProj) << std::endl;
+	aStream << "Viewport: " << glm::to_string(aSetup.viewport) << std::endl;
+	return aStream;
+}
 
 void 
 getCurrentGLSetup( soglu::GLViewSetup &aSetup );

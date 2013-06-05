@@ -12,6 +12,7 @@ SET(${PROJECT_NAME}_SOURCES
 	"src/OGLTools.cpp" 
 	"src/OGLDrawing.cpp" 
 	"src/BoundingBox.cpp" 
+	"src/GLViewSetup.cpp" 
 	)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES})

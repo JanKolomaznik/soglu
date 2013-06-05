@@ -7,6 +7,7 @@
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtc/type_ptr.hpp> 
 #include <cassert>
+#include <soglu/GLViewSetup.hpp>
 
 //#ifdef DEBUG_LEVEL
 //#define GL_CHECKED_CALL( ... ) { __VA_ARGS__ ; checkForGLError( TO_STRING( __FILE__ " on " << __LINE__) ); }
@@ -16,12 +17,26 @@
 
 #define SOGLU_ASSERT( ... ) { assert(__VA_ARGS__); }
 
+#define GL_ERROR_CLEAR_AFTER_CALL( ... ) { __VA_ARGS__ ; glGetError(); }
 
 namespace soglu {
+	
+glm::dvec3
+getPointFromScreenCoordinates(glm::fvec2 aScreenCoords, const GLViewSetup &aViewSetup, double aZValue = 0.0);
 
 inline void 
 checkForGLError(const std::string &situation){}
-	
+
+
+/**
+ * Basic space planes, each constant also defines index of axis perpendicular 
+ * to given plane.
+ **/
+enum CartesianPlanes{
+	YZ_PLANE = 0,
+	XZ_PLANE = 1,
+	XY_PLANE = 2
+};
 	
 struct GLPushAtribs
 {

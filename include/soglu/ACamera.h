@@ -35,6 +35,12 @@ toGLM(const Vector3f &aVec)
 	return glm::fvec3(aVec[0], aVec[1], aVec[2]);
 }
 
+inline glm::fvec2
+toGLM(const Vector2f &aVec)
+{
+	return glm::fvec2(aVec[0], aVec[1]);
+}
+
 inline Vector3f
 fromGLM(const glm::fvec3 &aVec)
 {
@@ -49,8 +55,8 @@ public:
 	typedef /*Vector< FloatType, 3 >*/glm::fvec3 Direction;
 
 	ACamera( const Position &eye = Position(), const Position &center = Position() ) 
-		: mTargetPos( center ), mEyePos( eye ), mUpDirection( 0.0f, 1.0f, 0.0f ), mTargetDirection( center - eye ), mRightDirection( 1.0f, 0.0f, 0.0f )
-		/*mFieldOfViewY( 45.0f ), mAspectRatio( 1.0f ), mZNear( 0.5f ), mZFar( 10000 )*/
+		: mTargetPos( center ), mEyePos( eye ), mUpDirection( 0.0f, 1.0f, 0.0f ), mTargetDirection( center - eye ), mRightDirection( 1.0f, 0.0f, 0.0f ), mZNear( 0.5f ), mZFar( 10000 )
+		/*mFieldOfViewY( 45.0f ), mAspectRatio( 1.0f )*/
 	{
 		mTargetDirection = glm::normalize(mTargetDirection);
 	}
@@ -118,6 +124,18 @@ public:
 	FloatType
 	targetDistance()
 	{ return mTargetDistance; }
+	
+	FloatType
+	aspectRatio() const
+	{
+		return mAspectRatio;
+	}
+	
+	void
+	setAspectRatio(FloatType aAspectRatio)
+	{
+		mAspectRatio = aAspectRatio;
+	}
 
 	/*SIMPLE_GET_SET_METHODS( FloatType, AspectRatio, mFieldOfViewY );
 	SIMPLE_GET_SET_METHODS( FloatType, FieldOfView, mAspectRatio );
@@ -139,7 +157,17 @@ public:
 	void
 	yawPitchAbsolute( FloatType yangle, FloatType pangle );*/
 
+	FloatType
+	near()const
+	{
+		return mZNear;
+	}
 	
+	FloatType
+	far()const
+	{
+		return mZFar;
+	}
 protected:
 	void
 	resetOrbit();
@@ -173,10 +201,10 @@ protected:
 
  	FloatType  		mTargetDistance; 
 
-	/*FloatType  		mFieldOfViewY; 
- 	FloatType  		mAspectRatio; 
+	/*FloatType  		mFieldOfViewY; */
+ 	FloatType  		mAspectRatio;
  	FloatType  		mZNear; 
- 	FloatType  		mZFar;*/
+ 	FloatType  		mZFar;
 };
 
 inline std::ostream &

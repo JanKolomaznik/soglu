@@ -9,6 +9,8 @@
 #include <string>
 
 namespace soglu {
+	
+
 
 struct GLPushAtribs
 {

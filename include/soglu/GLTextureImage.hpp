@@ -114,6 +114,10 @@ struct GLTextureImage
 	GLTextureImageTyped< Dim > &
 	GetDimensionedInterface();
 	
+	bool
+	linearInterpolation()const
+	{ return _linearInterpolation; }
+	
 	//SIMPLE_GET_SET_METHODS( bool, LinearInterpolation, _linearInterpolation );
 protected:
 	GLTextureImage( GLuint aTexID, bool aLinearInterpolation ): _linearInterpolation( aLinearInterpolation ), _gltextureID( aTexID )
@@ -130,9 +134,9 @@ struct GLTextureImageTyped: public GLTextureImage
 	typedef boost::shared_ptr< GLTextureImageTyped > Ptr;
 	typedef boost::weak_ptr< GLTextureImageTyped > WPtr;
 	
-	/*GLTextureImageTyped( GLuint aTexID, bool aLinearInterpolation, M4D::Imaging::ImageExtentsRecord< Dim > aExtents )
+	GLTextureImageTyped( GLuint aTexID, bool aLinearInterpolation, ExtentsRecord< Dim > aExtents )
 	: GLTextureImage( aTexID, aLinearInterpolation ), mExtents( aExtents )
-	{ }*/
+	{ }
 	
 	bool
 	Is1D()const
@@ -185,13 +189,14 @@ struct GLTextureImageTyped: public GLTextureImage
 		//return VectorMemberDivision( mExtents.elementExtents, (mExtents.maximum-mExtents.minimum) );
 	//}
 
-	/*void
-	updateTexture( GLuint aTexID, M4D::Imaging::ImageExtentsRecord< Dim > aExtents )
+	void
+	updateTexture(GLuint aTexID, ExtentsRecord< Dim > aExtents)
 	{
 		DeleteTexture(); //TODO check texture
 		_gltextureID = aTexID;
 		mExtents = aExtents;
-	}*/
+	}
+	
 	/*Vector< uint32, Dim > 
 	GetSize()const
 	{ return _image->GetSize(); }*/
@@ -241,9 +246,8 @@ GLTextureGetDimensionedInterfaceWPtr( GLTextureImage::WPtr aTexture )
 	return boost::dynamic_pointer_cast< GLTextureImageTyped< Dim > >( tex );
 	//}
 }
-
-
 /*
+
 template < size_t Dim >
 void
 updateTextureSubImageTyped( GLTextureImageTyped< Dim > &aTexImage, const M4D::Imaging::AImageRegionDim<Dim> &aImage, Vector< int, Dim > aMinimum, Vector< int, Dim > aMaximum )

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "soglu/ACamera.h"
+#include <soglu/ACamera.h>
 #include <glm/gtc/quaternion.hpp>
 
 namespace soglu {
@@ -21,6 +21,12 @@ public:
 	setFieldOfView(float aAngle)
 	{
 		mFieldOfViewY = aAngle;
+	}
+
+	float
+	fieldOfView() const
+	{
+		return mFieldOfViewY;
 	}
 	
 	void
@@ -54,7 +60,43 @@ protected:
 };
 
 typedef PerspectiveCamera<> Camera;
-typedef PerspectiveCamera<> OrthoCamera;
+
+
+class OrthoCamera: public ACamera
+{
+public:
+	void
+	setWindow( FloatType aWidth, FloatType aHeight )
+	{
+		mTopLeftCorner = glm::fvec2(-0.5f*aWidth, 0.5f*aHeight);
+		mBottomRightCorner = glm::fvec2(0.5f*aWidth, -0.5f*aHeight);
+		/*mLeft = -0.5f*aWidth;
+		mRight = 0.5f*aWidth;
+		mTop = 0.5f*aHeight;
+		mBottom = -0.5f*aHeight;*/
+	}
+	
+	glm::fvec2
+	topLeftCorner()const
+	{
+		return mTopLeftCorner;
+	}
+	
+	glm::fvec2
+	bottomRightCorner()const
+	{
+		return mBottomRightCorner;
+	}
+protected:
+	glm::fvec2 mTopLeftCorner;
+	glm::fvec2 mBottomRightCorner;
+	/*float mLeft;
+	float mRight;
+	float mTop;
+	float mBottom;*/
+};
+
+//typedef PerspectiveCamera<> OrthoCamera;
 
 template<typename TCamera>
 void
@@ -62,12 +104,12 @@ cameraRotateAroundPoint(TCamera &aCamera, glm::fquat aQ, glm::fvec3 aPoint)
 {
 	glm::fvec3 pos = aCamera.eyePosition();
 	glm::fvec3 tmpPos = pos - aPoint;
-	
+
 	pos = (aQ * tmpPos) + aPoint;
-	
+
 	aCamera.rotate(aQ);
 	aCamera.moveTo(pos);
-	
+
 	/*
 	
 	Position direction = toGLM(RotatePoint(fromGLM(mTargetDirection), q));

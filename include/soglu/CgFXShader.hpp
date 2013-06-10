@@ -302,6 +302,12 @@ namespace detail {
 	}
 	
 	inline void
+	parameterSetter(CGparameter aParameter, const glm::ivec2 &aVec2)
+	{
+		cgSetParameterValueir(aParameter, 2, glm::value_ptr(aVec2));
+	}
+	
+	inline void
 	parameterSetter(CGparameter aParameter, const glm::fvec3 &aVec3)
 	{
 		cgSetParameterValuefr(aParameter, 3, glm::value_ptr( aVec3 ));
@@ -313,6 +319,12 @@ namespace detail {
 		cgSetParameterValuedr(aParameter, 3, glm::value_ptr( aVec3 ));
 	}
 
+	inline void
+	parameterSetter(CGparameter aParameter, const glm::ivec3 &aVec3)
+	{
+		cgSetParameterValueir(aParameter, 3, glm::value_ptr(aVec3));
+	}
+	
 	//-------------------------------------------------------------------------
 /*	template<size_t tDim>
 	inline void
@@ -393,13 +405,13 @@ CgFXShader::setParameter( std::string aName, const GLTextureImage3D &aImage )
 	assert(isInitialized());
 	setTextureParameter(aName + ".data", aImage.GetTextureGLID() );
 
-	/*setParameter(aName + ".size", aImage.getExtents().maximum - aImage.getExtents().minimum ); //TODO
+	setParameter(aName + ".size", aImage.getExtents().maximum - aImage.getExtents().minimum ); //TODO
 
 	setParameter(aName + ".realSize", aImage.getExtents().realMaximum - aImage.getExtents().realMinimum );
 
 	setParameter(aName + ".realMinimum", aImage.getExtents().realMinimum );
 
-	setParameter(aName + ".realMaximum", aImage.getExtents().realMaximum );*/
+	setParameter(aName + ".realMaximum", aImage.getExtents().realMaximum );
 }
 /*
 inline void

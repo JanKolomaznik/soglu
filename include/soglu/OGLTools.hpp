@@ -24,6 +24,40 @@ namespace soglu {
 glm::dvec3
 getPointFromScreenCoordinates(glm::fvec2 aScreenCoords, const GLViewSetup &aViewSetup, double aZValue = 0.0);
 
+template <typename TType>
+glm::detail::tvec3<TType>
+getDirectionFromScreenCoordinatesAndCameraPosition(const glm::detail::tvec2<TType> &aScreenCoords, const GLViewSetup &aViewSetup, const glm::detail::tvec3<TType> &aCameraPos )
+{
+	glm::detail::tvec3<TType> tmp(glm::unProject(
+		glm::dvec3(aScreenCoords, 0.0),
+		aViewSetup.modelView,
+		aViewSetup.projection,
+		aViewSetup.viewport
+	));
+	
+	glm::detail::tvec3<TType> direction;
+	/*GLint res = gluUnProject(
+			aScreenCoords[0],  
+			aScreenCoords[1],  
+			0.0,  
+			aViewSetup.model,  
+			aViewSetup.proj,  
+			aViewSetup.view,  
+			&(objCoords1[0]),  
+			&(objCoords1[1]),  
+			&(objCoords1[2])
+			);
+	if( res == GLU_FALSE ) {
+		_THROW_ GLException( "Cannot unproject screen coordinates" );
+	}*/
+		
+	//LOG( "screen : " << aScreenCoords );
+	//LOG( "coords1 : " << objCoords1 );
+	direction = tmp - aCameraPos;
+	glm::normalize(direction);
+	return direction;
+}
+
 inline void 
 checkForGLError(const std::string &situation){}
 

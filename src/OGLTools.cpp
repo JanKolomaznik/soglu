@@ -20,6 +20,7 @@ getPointFromScreenCoordinates(glm::fvec2 aScreenCoords, const GLViewSetup &aView
 	);
 	return tmp;
 }
+
 	
 #ifdef DISABLE_0
 void 
@@ -48,39 +49,7 @@ operator<<( std::ostream & stream, const GLViewSetup &setup )
 
 
 
-Vector3f
-getDirectionFromScreenCoordinatesAndCameraPosition(glm::fvec2 aScreenCoords, const GLViewSetup &aViewSetup, const glm::fvec3 aCameraPos )
-{
-	glm::dvec3 tmp = glm::unProject(
-		glm::dvec3(aScreenCoords),
-		aViewSetup.modelView,
-		aViewSetup.projection,
-		aViewSetup.viewport
-	);
-	
-	Vector3d objCoords1( glm::value_ptr(tmp) );
-	glm::fvec3 direction;
-	/*GLint res = gluUnProject(
-			aScreenCoords[0],  
-			aScreenCoords[1],  
-			0.0,  
-			aViewSetup.model,  
-			aViewSetup.proj,  
-			aViewSetup.view,  
-			&(objCoords1[0]),  
-			&(objCoords1[1]),  
-			&(objCoords1[2])
-			);
-	if( res == GLU_FALSE ) {
-		_THROW_ GLException( "Cannot unproject screen coordinates" );
-	}*/
-		
-	//LOG( "screen : " << aScreenCoords );
-	//LOG( "coords1 : " << objCoords1 );
-	direction = objCoords1 - aCameraPos;
-	glm::normalize(direction);
-	return direction;
-}
+
 
 
 void 

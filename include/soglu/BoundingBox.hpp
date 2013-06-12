@@ -66,15 +66,6 @@ getBBoxMinMaxDistance(
 		       	unsigned		&maxId
 			);
 
-unsigned
-getPlaneVerticesInBoundingBox( 
-		const BoundingBox3D	&bbox, 
-		const glm::fvec3 	&planePoint, 
-		const glm::fvec3 	&planeNormal,
-		unsigned			minId,
-	       	glm::fvec3 		vertices[]
-		);
-
 
 unsigned
 getPlaneVerticesInBoundingBox( 

@@ -99,7 +99,7 @@ getPlaneVerticesInBoundingBox(
 			++idx;
 			//center += vertices[idx];
 			if( idx == 6 ) break;
-		}
+		}		
 	}
 	SOGLU_ASSERT( idx <= 6 ) //plane and box edges can have 6 intersections maximally
 	return idx;

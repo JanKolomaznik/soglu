@@ -15,6 +15,7 @@
 #include "MedV4D/GUI/utils/DrawingTools.h"*/
 
 #include <soglu/BoundingBox.hpp>
+#include <soglu/OGLTools.hpp>
 
 namespace soglu {
 
@@ -27,8 +28,8 @@ drawTexturedQuad(const glm::fvec2 &point1, const glm::fvec2 &point3);
 void
 drawRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3);
 
-void
-drawCylinder(const glm::fvec3 &aBaseCenter, const glm::fvec3 &aBaseNormal, float radius, float height);
+//void
+//drawCylinder(const glm::fvec3 &aBaseCenter, const glm::fvec3 &aBaseNormal, float radius, float height);
 
 void
 drawPolygon(const glm::fvec3 aVertices[], size_t aCount);
@@ -243,12 +244,6 @@ void
 drawSphere( const Sphere3Df &sphere );
 
 void
-drawCylinder( float radius, float height );
-
-void
-drawCylinder( Vector3f aBaseCenter, Vector3f aBaseNormal, float radius, float height );
-
-void
 drawSphericalCap( float aBaseRadius, float aHeight );
 
 void
@@ -262,21 +257,27 @@ drawPlane( float aWidth, float aHeight );
 
 void
 drawPlane( const Vector3f &aCenter, const Vector3f &aVDirection, const Vector3f &aWDirection, float aWidth, float aHeight );
+*/
+void
+drawCylinder( float radius, float height );
 
 void
-drawGrid( const Vector3f &aCenter, const Vector3f &aVDirection, const Vector3f &aWDirection, float aWidth, float aHeight, float aStep = 10.0f );
+drawCylinder( glm::fvec3 aBaseCenter, glm::fvec3 aBaseNormal, float radius, float height );
 
 void
-drawStippledLine( const Vector3f &aStart, const Vector3f &aEnd );
+drawGrid( const glm::fvec3 &aCenter, const glm::fvec3 &aVDirection, const glm::fvec3 &aWDirection, float aWidth, float aHeight, float aStep = 10.0f );
+
+void
+drawStippledLine( const glm::fvec3 &aStart, const glm::fvec3 &aEnd );
 
 template< typename TIterator >
 void
-drawPointSet2D( TIterator aBegin, TIterator aEnd, Vector2f aInterval, CartesianPlanes aPlane )
+drawPointSet2D( TIterator aBegin, TIterator aEnd, glm::fvec2 aInterval, CartesianPlanes aPlane )
 {
 	glBegin( GL_POINTS );
 		for( TIterator it = aBegin; it != aEnd; ++it ) {
 			if ( intervalTest( aInterval[0], aInterval[1], (*it)[aPlane] ) ) { 
-				M4D::GLVertexVector( VectorPurgeDimension( *it, aPlane ) );
+				soglu::GLVertexVector( purgeDimension( *it, aPlane ) );
 			}
 		}
 	glEnd();
@@ -284,7 +285,7 @@ drawPointSet2D( TIterator aBegin, TIterator aEnd, Vector2f aInterval, CartesianP
 
 template< typename TIterator >
 void
-drawLineSet2D( TIterator aBegin, TIterator aEnd, Vector2f aInterval, CartesianPlanes aPlane )
+drawLineSet2D( TIterator aBegin, TIterator aEnd, glm::fvec2 aInterval, CartesianPlanes aPlane )
 {
 	glBegin( GL_LINES );
 		for( TIterator it = aBegin; it != aEnd; ++it ) {
@@ -293,17 +294,17 @@ drawLineSet2D( TIterator aBegin, TIterator aEnd, Vector2f aInterval, CartesianPl
 			{ 
 				continue;
 			}
-			M4D::GLVertexVector( VectorPurgeDimension( it->firstPoint(), aPlane ) );
-			M4D::GLVertexVector( VectorPurgeDimension( it->secondPoint(), aPlane ) );
+			soglu::GLVertexVector( purgeDimension( it->firstPoint(), aPlane ) );
+			soglu::GLVertexVector( purgeDimension( it->secondPoint(), aPlane ) );
 		}
 	glEnd();
 	glBegin( GL_POINTS );
 		for( TIterator it = aBegin; it != aEnd; ++it ) {
 			if ( intervalTest( aInterval[0], aInterval[1], it->firstPoint()[aPlane] ) ) { 
-				M4D::GLVertexVector( VectorPurgeDimension( it->firstPoint(), aPlane ) );
+				soglu::GLVertexVector( purgeDimension( it->firstPoint(), aPlane ) );
 			}
 			if ( intervalTest( aInterval[0], aInterval[1], it->secondPoint()[aPlane] ) ) { 
-				M4D::GLVertexVector( VectorPurgeDimension( it->secondPoint(), aPlane ) );
+				soglu::GLVertexVector( purgeDimension( it->secondPoint(), aPlane ) );
 			}
 		}
 	glEnd();
@@ -315,11 +316,11 @@ drawPointSet( TIterator aBegin, TIterator aEnd )
 {
 	glBegin( GL_POINTS );
 		for( TIterator it = aBegin; it != aEnd; ++it ) {
-			M4D::GLVertexVector( *it );
+			soglu::GLVertexVector( *it );
 		}
 	glEnd();
 }
-
+/*
 template< typename TIterator >
 void
 drawLineSet( TIterator aBegin, TIterator aEnd )

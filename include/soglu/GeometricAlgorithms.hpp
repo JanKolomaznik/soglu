@@ -27,10 +27,10 @@ VectorPerpDotProduct( const Vector< CoordType, 2 > &a, const Vector< CoordType, 
 {
 	return a[0] * b[1] - a[1] * b[0];
 }
-
-template< typename CoordType >
-inline Vector< CoordType, 3 >
-getSomePerpendicularVector( const Vector< CoordType, 3 > &v )
+*/
+/*template< typename CoordType >
+inline glm::detail::tvec3<CoordType>
+getSomePerpendicularVector( const glm::detail::tvec3<CoordType> &v )
 {
 	size_t maxI = maxIdx< CoordType, 3 >( v );
 	size_t minI = minIdx< CoordType, 3 >( v );
@@ -46,28 +46,26 @@ getSomePerpendicularVector( const Vector< CoordType, 3 > &v )
 	v2 = VectorProduct( v, v2 );
 	VectorNormalization( v2 );
 	return v2;
-}
+}*/
 
 template< typename CoordType >
 inline double
-angleAndRotationAxisFromVectors( const Vector< CoordType, 3 > &a, const Vector< CoordType, 3 > &b, Vector< CoordType, 3 > &axis )
+angleAndRotationAxisFromVectors( const glm::detail::tvec3<CoordType> &a, const glm::detail::tvec3<CoordType> &b, glm::detail::tvec3<CoordType> &axis )
 {
-	Vector< CoordType, 3 > aN = a; //TODO
-	VectorNormalization( aN );
-	Vector< CoordType, 3 > bN = b;
-	VectorNormalization( bN );
+	glm::detail::tvec3<CoordType> aN = glm::normalize( a ); //TODO
+	glm::detail::tvec3<CoordType> bN = glm::normalize( b );
 
-	double cAngle = static_cast< double >( aN * bN );
+	double cAngle = static_cast< double >(glm::dot( aN, bN ));
 	double angle = acos( cAngle );
-	axis = VectorProduct( aN, bN );
-	if( abs( VectorSize( axis ) ) < Epsilon ) {
-		axis = getSomePerpendicularVector( aN );
-	}
-	VectorNormalization( axis );
+	axis = glm::cross( aN, bN );
+	/*if( abs( glm::length( axis ) ) < Epsilon ) {
+		axis = getSomePerpendicularVector( aN ); //TODO
+	}*/
+	axis = glm::normalize( axis );
 	return angle;
 }
 
-
+/*
 
 template< typename CoordType >
 bool

@@ -20,6 +20,19 @@
 #define GL_ERROR_CLEAR_AFTER_CALL( ... ) { __VA_ARGS__ ; glGetError(); }
 
 namespace soglu {
+
+template< typename NType >
+inline bool
+intervalTest( NType a, NType b, NType val ) {
+	if( val < a ) {
+		return false;
+	} 
+	if( val > b ) {
+		return false;
+	} 
+
+	return true;
+}
 	
 glm::dvec3
 getPointFromScreenCoordinates(glm::fvec2 aScreenCoords, const GLViewSetup &aViewSetup, double aZValue = 0.0);

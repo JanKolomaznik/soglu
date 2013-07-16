@@ -54,4 +54,5 @@ insertDimension( const glm::detail::tvec2< CoordType > &u, CoordType value, size
 	return data;
 }
 
+
 } //namespace soglu

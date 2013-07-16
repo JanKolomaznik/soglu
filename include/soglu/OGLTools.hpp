@@ -47,7 +47,9 @@ getDirectionFromScreenCoordinatesAndCameraPosition(const glm::detail::tvec2<TTyp
 		aViewSetup.projection,
 		aViewSetup.viewport
 	));
-	
+	//std::cout << "aViewSetup.modelView = " << glm::to_string(aViewSetup.modelView) << std::endl;
+	//std::cout << "aViewSetup.projection = " << glm::to_string(aViewSetup.projection) << std::endl;
+	//std::cout << "aViewSetup.viewport = " << glm::to_string(aViewSetup.viewport) << std::endl;
 	glm::detail::tvec3<TType> direction;
 	/*GLint res = gluUnProject(
 			aScreenCoords[0],  
@@ -67,6 +69,9 @@ getDirectionFromScreenCoordinatesAndCameraPosition(const glm::detail::tvec2<TTyp
 	//LOG( "screen : " << aScreenCoords );
 	//LOG( "coords1 : " << objCoords1 );
 	direction = tmp - aCameraPos;
+	//std::cout << "TMP = " << glm::to_string(tmp) << std::endl;
+	//std::cout << "aCameraPos = " << glm::to_string(aCameraPos) << std::endl;
+	//std::cout << "direction = " << glm::to_string(tmp) << std::endl;
 	glm::normalize(direction);
 	return direction;
 }

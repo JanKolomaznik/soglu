@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <soglu/ACamera.h>
+#include <soglu/GLMUtils.hpp>
 #include <glm/gtc/quaternion.hpp>
 
 namespace soglu {

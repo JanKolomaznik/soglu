@@ -160,18 +160,27 @@ initializeCg();
 void
 finalizeCg();
 
-class CgException
+class CgException: public virtual std::exception, public virtual boost::exception
 {
 public:
-	CgException( std::string aEffectName, std::string aReport ) throw() {}
-	CgException( std::string aReport ) throw() {}
+	CgException( std::string aEffectName, std::string aReport ) throw(): mEffectName(aEffectName), mReport(aReport) {}
+	CgException( std::string aReport ) throw(): mEffectName("CG EFFECT"), mReport(aReport) {}
 	~CgException() throw(){}
+	const char * what() const throw()
+	{
+		return mReport.c_str();
+	}
+	
+protected:
+	std::string mEffectName;
+	std::string mReport;
 };
 
 struct EObjectNotInitialized {};
 
 void 
 checkForCgError( const std::string &situation, CGcontext &context = gCgContext );
+
 
 
 class CgFXShader 

@@ -45,6 +45,7 @@ CgFXShader::initialize(//CGcontext   				&cgContext,
 	if ( !boost::filesystem::is_regular_file( effectFile ) ) {
 		throw CgException( mEffectName, boost::str( boost::format( "Effect could not be loaded! `%1%` is not regular file." ) %effectFile ) );
 	}
+	checkForCgError(boost::str(boost::format("before creating cg effect from file \"%1%\".") %  effectFile));
 	mCgEffect = makeResourceGuardPtr< CGeffect >( boost::bind<CGeffect>( &cgCreateEffectFromFile, gCgContext, effectFile.string().data(), static_cast<const char **>(0) ), boost::bind<void>( &cgDestroyEffect, _1 ) );
 
 	checkForCgError(boost::str(boost::format("creating cg effect from file \"%1%\".") %  effectFile));
@@ -56,13 +57,16 @@ CgFXShader::initialize(//CGcontext   				&cgContext,
 		throw CgException( mEffectName, "No technique found!" );
 	}
 	while (cgTechnique) {
+		std::string techniqueName = cgGetTechniqueName(cgTechnique);
+		checkForCgError(boost::str(boost::format("before validation of technique \"%1%\" from \"%2%\".") % techniqueName % effectFile));		
 		if ( cgValidateTechnique(cgTechnique) == CG_FALSE ) {
-			LOG( "\tTechnique " << cgGetTechniqueName(cgTechnique) << " did not validate. Skipping." );
+			LOG( "\tTechnique " << techniqueName << " did not validate. Skipping." );
 		} else {
 
-			LOG( "\tTechnique " << cgGetTechniqueName(cgTechnique) << " validated. Enabling." );
-			mCgTechniques[ cgGetTechniqueName(cgTechnique) ] = cgTechnique;
+			LOG( "\tTechnique " << techniqueName << " validated. Enabling." );
+			mCgTechniques[ techniqueName ] = cgTechnique;
 		}
+		checkForCgError(boost::str(boost::format("after validation of technique \"%1%\" from \"%2%\".") % techniqueName % effectFile));
 		cgTechnique = cgGetNextTechnique( cgTechnique );
 	}
 	if ( mCgTechniques.size() == 0 ) {
@@ -87,6 +91,7 @@ checkForCgError( const std::string &situation, CGcontext &context  )
 	CGerror error = cgGetError();
 	if (error != CG_NO_ERROR) {
 		std::string errString;
+		errString += boost::str(boost::format("CG error 0x%02X,") % error);
 		const char *msg = cgGetLastErrorString(&error);
 		if (msg) {
 			errString = msg;
@@ -97,6 +102,7 @@ checkForCgError( const std::string &situation, CGcontext &context  )
 		if( listing ) {
 			message += std::string("\nLast listing:") + std::string(listing);
 		}
+		D_PRINT("CG ERROR: " << message << std::endl);
 		throw CgException( message );
 	}
 }

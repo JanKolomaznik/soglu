@@ -3,29 +3,31 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/cast.hpp>
+#include <GL/gl.h>
 /*#include "MedV4D/Common/Common.h"
 #include "MedV4D/GUI/utils/OGLTools.h"
 #include "MedV4D/Imaging/AImageRegion.h"
 #include "MedV4D/Imaging/Image.h"
 #include "MedV4D/GUI/utils/OGLDrawing.h"*/
 
-#include <soglu/OGLTools.hpp>
+//#include <soglu/OGLTools.hpp>
 #include <cassert>
 #include <soglu/GLMUtils.hpp>
+#include <soglu/ErrorHandling.hpp>
 
 namespace soglu
 {
-	
+
 template< unsigned tDim >
 struct ExtentsRecord
 {
 	static const unsigned 	Dimension = tDim;
-	
+
 	typename soglu::GLMDimension<tDim>::fvec realMinimum;
 	typename soglu::GLMDimension<tDim>::fvec realMaximum;
 	typename soglu::GLMDimension<tDim>::ivec minimum;
 	typename soglu::GLMDimension<tDim>::ivec maximum;
-	
+
 	typename soglu::GLMDimension<tDim>::fvec elementExtents;
 };
 
@@ -54,7 +56,7 @@ struct GLTextureImage
 
 	/*virtual void
 	SetImage( const M4D::Imaging::AImageRegion &image ) = 0;*/
-	
+
 	void
 	Reset();
 
@@ -113,16 +115,16 @@ struct GLTextureImage
 	template< size_t Dim >
 	GLTextureImageTyped< Dim > &
 	GetDimensionedInterface();
-	
+
 	bool
 	linearInterpolation()const
 	{ return _linearInterpolation; }
-	
+
 	//SIMPLE_GET_SET_METHODS( bool, LinearInterpolation, _linearInterpolation );
 protected:
 	GLTextureImage( GLuint aTexID, bool aLinearInterpolation ): _linearInterpolation( aLinearInterpolation ), _gltextureID( aTexID )
 	{ assert( aTexID ); }
-	
+
 	bool				_linearInterpolation;
 	//M4D::Imaging::AImage::Ptr	_image;
 	GLuint				_gltextureID;
@@ -133,11 +135,11 @@ struct GLTextureImageTyped: public GLTextureImage
 {
 	typedef boost::shared_ptr< GLTextureImageTyped > Ptr;
 	typedef boost::weak_ptr< GLTextureImageTyped > WPtr;
-	
+
 	GLTextureImageTyped( GLuint aTexID, bool aLinearInterpolation, ExtentsRecord< Dim > aExtents )
 	: GLTextureImage( aTexID, aLinearInterpolation ), mExtents( aExtents )
 	{ }
-	
+
 	bool
 	Is1D()const
 	{ return Dim == 1; }
@@ -146,7 +148,7 @@ struct GLTextureImageTyped: public GLTextureImage
 	Is2D()const
 	{ return Dim == 2; }
 
-	
+
 	bool
 	Is3D()const
 	{ return Dim == 3; }
@@ -162,7 +164,7 @@ struct GLTextureImageTyped: public GLTextureImage
 	size_t
 	GetDimension()const
 	{ return Dim; }
-	
+
 	const ExtentsRecord<Dim> &
 	getExtents()const
 	{ return mExtents; }
@@ -171,15 +173,15 @@ struct GLTextureImageTyped: public GLTextureImage
 	GetMinimum()const
 	{ return _image->GetRealMinimum(); }
 
-	Vector< float32, Dim > 
+	Vector< float32, Dim >
 	GetMaximum()const
 	{ return _image->GetRealMaximum(); }
 
-	Vector< float32, Dim > 
+	Vector< float32, Dim >
 	GetRealSize()const
 	{ return _image->GetRealSize(); }
 
-	Vector< float32, Dim > 
+	Vector< float32, Dim >
 	GetElementExtents()const
 	{ return mExtents.GetElementExtents(); }*/
 
@@ -196,21 +198,21 @@ struct GLTextureImageTyped: public GLTextureImage
 		_gltextureID = aTexID;
 		mExtents = aExtents;
 	}
-	
-	/*Vector< uint32, Dim > 
+
+	/*Vector< uint32, Dim >
 	GetSize()const
 	{ return _image->GetSize(); }*/
 
 
 	/*void
 	SetImage( const M4D::Imaging::AImageRegion &image )
-	{ 
+	{
 		SetImage( static_cast<const M4D::Imaging::AImageRegionDim<Dim> &>( image ) );
 	}
 
 	void
 	SetImage( const M4D::Imaging::AImageRegionDim<Dim> &image )
-	{	
+	{
 		_image = M4D::Imaging::AImageRegionDim<Dim>::Cast( image.Clone() );
 	}
 
@@ -263,7 +265,7 @@ updateTextureSubImage( GLTextureImage &aTexImage, const M4D::Imaging::AImageRegi
 	if ( aTexImage.GetDimension() != aSubImage.GetDimension() || Dim != aTexImage.GetDimension() ) {
 		_THROW_ M4D::ErrorHandling::EBadParameter( "Texture and subimage have different dimension" );
 	}
-	
+
 	updateTextureSubImageTyped< Dim >( aTexImage.GetDimensionedInterface<Dim>(), static_cast< const M4D::Imaging::AImageRegionDim<Dim> & >( aSubImage ), aMinimum, aMaximum );
 }
 
@@ -288,7 +290,7 @@ recreateTextureFromImageTyped( GLTextureImageTyped< Dim > &aTexImage, const M4D:
 {
 	//TODO test image properties if same
 	aTexImage.DeleteTexture();
-	
+
 	GLuint textureID = GLPrepareTextureFromImageData( image, aTexImage.GetLinearInterpolation() ); //TODO prevent loosing texture during exception
 	aTexImage.updateTexture( textureID, image.GetImageExtentsRecord() );
 	//aTexImage.SetImage( image );

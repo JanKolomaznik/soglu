@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "soglu/OGLTools.hpp"
 #include "soglu/OGLDrawing.hpp"
 
@@ -8,7 +9,7 @@
 
 namespace soglu
 {
-	
+
 glm::dvec3
 getPointFromScreenCoordinates(glm::fvec2 aScreenCoords, const GLViewSetup &aViewSetup, double aZValue)
 {
@@ -21,9 +22,9 @@ getPointFromScreenCoordinates(glm::fvec2 aScreenCoords, const GLViewSetup &aView
 	return tmp;
 }
 
-	
+
 #ifdef DISABLE_0
-void 
+void
 getCurrentGLSetup(soglu::GLViewSetup &aSetup)
 {
 	glGetDoublev( GL_PROJECTION_MATRIX, glm::value_ptr( aSetup.projection) );
@@ -52,7 +53,7 @@ operator<<( std::ostream & stream, const GLViewSetup &setup )
 
 
 
-void 
+void
 checkForGLError( const std::string &situation  )
 {
 	GLenum errorCode = glGetError();
@@ -74,11 +75,11 @@ getImageBufferFromTexture( uint32 &aWidth, uint32 &aHeight, boost::shared_array<
 
 	aBuffer = boost::shared_array< uint8 >( new uint8[ 3 * width * height ] );
 
-	GL_CHECKED_CALL( glGetTexImage(	
-				GL_TEXTURE_2D, 
-				0, 
-				GL_RGB, 
-				GL_UNSIGNED_BYTE, 
+	GL_CHECKED_CALL( glGetTexImage(
+				GL_TEXTURE_2D,
+				0,
+				GL_RGB,
+				GL_UNSIGNED_BYTE,
 				(void*)aBuffer.get()
 				) );
 	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
@@ -93,7 +94,7 @@ initOpenGL()
 	if (GLEW_OK != err) {
 		throw "EInitError";//( "GLEW" );
 	}
-	
+
 	std::cout << boost::format("Status: Using GLEW %1%\n") % glewGetString(GLEW_VERSION);
 	/*LOG( "Status: Using GLEW " << glewGetString(GLEW_VERSION) );
 	LOG( "\tGLEW_VERSION_1_1 " << ((GLEW_VERSION_1_1) ? std::string("OK") : std::string("FAIL")) );
@@ -119,11 +120,11 @@ getImageBufferFromTexture(size_t &aWidth, size_t &aHeight, boost::shared_array< 
 
 	aBuffer = boost::shared_array< uint8_t >( new uint8_t[ 3 * width * height ] );
 
-	GL_CHECKED_CALL( glGetTexImage(	
-				GL_TEXTURE_2D, 
-				0, 
-				GL_RGB, 
-				GL_UNSIGNED_BYTE, 
+	GL_CHECKED_CALL( glGetTexImage(
+				GL_TEXTURE_2D,
+				0,
+				GL_RGB,
+				GL_UNSIGNED_BYTE,
 				(void*)aBuffer.get()
 				) );
 	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );

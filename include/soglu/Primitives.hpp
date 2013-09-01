@@ -6,6 +6,17 @@
 
 namespace soglu {
 
+/**
+ * Basic space planes, each constant also defines index of axis perpendicular
+ * to given plane.
+ **/
+enum CartesianPlanes{
+	YZ_PLANE = 0,
+	XZ_PLANE = 1,
+	XY_PLANE = 2
+};
+
+
 template< typename TVector >
 class Plane
 {

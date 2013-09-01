@@ -2,6 +2,7 @@
 
 #include <glm/gtc/type_precision.hpp>
 #include <glm/glm.hpp>
+#include <cassert>
 
 namespace soglu {
 
@@ -54,5 +55,22 @@ insertDimension( const glm::detail::tvec2< CoordType > &u, CoordType value, size
 	return data;
 }
 
+template <typename TCoord>
+void set(glm::detail::tvec2<TCoord> &aV, const TCoord *aData)
+{
+	assert(aData);
+	for (size_t i = 0; i < 2; ++i) {
+		aV[i] = aData[i];
+	}
+}
+
+template <typename TCoord>
+void set(glm::detail::tvec3<TCoord> &aV, const TCoord *aData)
+{
+	assert(aData);
+	for (size_t i = 0; i < 3; ++i) {
+		aV[i] = aData[i];
+	}
+}
 
 } //namespace soglu

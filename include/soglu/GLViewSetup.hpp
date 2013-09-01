@@ -2,13 +2,17 @@
 
 
 #include <string>
+#include <ostream>
 #include <glm/glm.hpp>
-//#include <glm/ext.hpp>
-
-#include <soglu/Camera.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+
+
 namespace soglu {
+
+class PerspectiveCamera;
+class OrthoCamera;
 
 class GLException
 {
@@ -21,7 +25,7 @@ struct GLViewSetup
 {
 	GLViewSetup(): model(1.0), view(1.0), modelView(1.0), modelViewProj(1.0), projection(1.0)
 	{}
-	
+
 	glm::dmat4x4 model;
 	glm::dmat4x4 view;
 	glm::dmat4x4 modelView;
@@ -42,11 +46,11 @@ operator<<(std::ostream &aStream, const GLViewSetup &aSetup)
 	return aStream;
 }
 
-void 
+void
 getCurrentGLSetup( soglu::GLViewSetup &aSetup );
 
 GLViewSetup
-getViewSetupFromCamera( const Camera &camera );
+getViewSetupFromCamera( const PerspectiveCamera &camera );
 
 GLViewSetup
 getViewSetupFromOrthoCamera( const OrthoCamera &camera );

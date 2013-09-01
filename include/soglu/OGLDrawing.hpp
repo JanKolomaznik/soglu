@@ -15,7 +15,8 @@
 #include "MedV4D/GUI/utils/DrawingTools.h"*/
 
 #include <soglu/BoundingBox.hpp>
-#include <soglu/OGLTools.hpp>
+#include <soglu/GLWrappers.hpp>
+#include <soglu/Primitives.hpp>
 
 namespace soglu {
 
@@ -33,7 +34,7 @@ drawRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3);
 
 void
 drawPolygon(const glm::fvec3 aVertices[], size_t aCount);
-	
+
 
 /*void
 SetToViewConfiguration2D( const ViewConfiguration2D &config );
@@ -98,7 +99,7 @@ GLDrawVolumeSliceCenterSamples(
 
 void
 GLDrawVolumeSlice(
-		const Vector< float32, 3 > 	&min, 
+		const Vector< float32, 3 > 	&min,
 		const Vector< float32, 3 > 	&max,
 		float32				sliceCoord,
 		CartesianPlanes			plane
@@ -106,7 +107,7 @@ GLDrawVolumeSlice(
 
 void
 GLDrawVolumeSlice3D(
-		const Vector< float32, 3 > 	&min, 
+		const Vector< float32, 3 > 	&min,
 		const Vector< float32, 3 > 	&max,
 		float32				sliceCoord,
 		CartesianPlanes			plane
@@ -114,15 +115,15 @@ GLDrawVolumeSlice3D(
 
 void
 GLDraw2DImage(
-		const Vector< float32, 2 > 	&min, 
+		const Vector< float32, 2 > 	&min,
 		const Vector< float32, 2 > 	&max
 		);
 
 template< typename ImageRegionType >
 void
 GLDrawImageData( const ImageRegionType &image, bool linearInterpolation );
-	
-	
+
+
 void
 GLDrawImageData( const M4D::Imaging::AImageRegionDim< 2 > &image, bool linearInterpolation );
 
@@ -190,9 +191,9 @@ GLDrawBoundingBox( const Vector< float, 3 > &corner1, const Vector< float, 3 > &
 void
 GLDrawBox( const Vector< float, 3 > &corner1, const Vector< float, 3 > &corner2 );
 
-template< 
-	typename CoordType, 
-	template <typename CType> class NormalPartType, 
+template<
+	typename CoordType,
+	template <typename CType> class NormalPartType,
 	typename ColorPartType
 	>
 inline void
@@ -202,8 +203,8 @@ GLVertexInfoDraw( const M4D::Imaging::Geometry::VertexInfo< CoordType, NormalPar
 template<
 	typename VertexList,
 	typename FaceInfoPartType,
-	typename NormalPartType, 
-	typename ColorPartType 
+	typename NormalPartType,
+	typename ColorPartType
 	>
 inline void
 GLFaceInfoDraw( const VertexList & vertices, const M4D::Imaging::Geometry::FaceInfo< FaceInfoPartType, NormalPartType, ColorPartType > &finfo );
@@ -276,7 +277,7 @@ drawPointSet2D( TIterator aBegin, TIterator aEnd, glm::fvec2 aInterval, Cartesia
 {
 	glBegin( GL_POINTS );
 		for( TIterator it = aBegin; it != aEnd; ++it ) {
-			if ( intervalTest( aInterval[0], aInterval[1], (*it)[aPlane] ) ) { 
+			if ( intervalTest( aInterval[0], aInterval[1], (*it)[aPlane] ) ) {
 				soglu::GLVertexVector( purgeDimension( *it, aPlane ) );
 			}
 		}
@@ -291,7 +292,7 @@ drawLineSet2D( TIterator aBegin, TIterator aEnd, glm::fvec2 aInterval, Cartesian
 		for( TIterator it = aBegin; it != aEnd; ++it ) {
 			if ( (it->firstPoint()[aPlane] < aInterval[0] && it->secondPoint()[aPlane] < aInterval[0])
 				|| (it->firstPoint()[aPlane] > aInterval[1] && it->secondPoint()[aPlane] > aInterval[1]) )
-			{ 
+			{
 				continue;
 			}
 			soglu::GLVertexVector( purgeDimension( it->firstPoint(), aPlane ) );
@@ -300,10 +301,10 @@ drawLineSet2D( TIterator aBegin, TIterator aEnd, glm::fvec2 aInterval, Cartesian
 	glEnd();
 	glBegin( GL_POINTS );
 		for( TIterator it = aBegin; it != aEnd; ++it ) {
-			if ( intervalTest( aInterval[0], aInterval[1], it->firstPoint()[aPlane] ) ) { 
+			if ( intervalTest( aInterval[0], aInterval[1], it->firstPoint()[aPlane] ) ) {
 				soglu::GLVertexVector( purgeDimension( it->firstPoint(), aPlane ) );
 			}
-			if ( intervalTest( aInterval[0], aInterval[1], it->secondPoint()[aPlane] ) ) { 
+			if ( intervalTest( aInterval[0], aInterval[1], it->secondPoint()[aPlane] ) ) {
 				soglu::GLVertexVector( purgeDimension( it->secondPoint(), aPlane ) );
 			}
 		}

@@ -1,8 +1,9 @@
 #include <soglu/GLViewSetup.hpp>
+#include <soglu/Camera.hpp>
 
 
 namespace soglu {
-	
+
 void
 getProjectionAndViewMatricesFromOrthoCamera( const OrthoCamera &camera, glm::dmat4x4 &aProjection, glm::dmat4x4 &aView )
 {
@@ -18,7 +19,7 @@ getProjectionAndViewMatricesFromOrthoCamera( const OrthoCamera &camera, glm::dma
 	std::cout << "bottomRightCorner : " << glm::to_string(camera.bottomRightCorner()) << "\n";
 	std::cout << "near : " << camera.near() << "\n";
 	std::cout << "far : " << camera.far() << "\n";*/
-	aView = glm::lookAt<double>( 
+	aView = glm::lookAt<double>(
 		glm::dvec3(camera.eyePosition()),
 		glm::dvec3(camera.targetPosition()),
 		glm::dvec3(camera.upDirection())
@@ -29,13 +30,13 @@ void
 getProjectionAndViewMatricesFromCamera( const Camera &camera, glm::dmat4x4 &aProjection, glm::dmat4x4 &aView )
 {
 	aProjection = glm::perspective<double>(
-		camera.fieldOfView(), 
- 		camera.aspectRatio(), 
- 		camera.near(), 
+		camera.fieldOfView(),
+ 		camera.aspectRatio(),
+ 		camera.near(),
  		camera.far()
 	);
-	
-	aView = glm::lookAt<double>( 
+
+	aView = glm::lookAt<double>(
 		glm::dvec3(camera.eyePosition()),
 		glm::dvec3(camera.targetPosition()),
 		glm::dvec3(camera.upDirection())
@@ -46,7 +47,7 @@ GLViewSetup
 getViewSetupFromCamera( const Camera &camera )
 {
 	GLViewSetup setup;
-	
+
 	getProjectionAndViewMatricesFromCamera( camera, setup.projection, setup.view );
 	setup.modelView = setup.view;
 	setup.modelViewProj = setup.projection * setup.modelView;
@@ -57,7 +58,7 @@ GLViewSetup
 getViewSetupFromOrthoCamera( const OrthoCamera &camera )
 {
 	GLViewSetup setup;
-	
+
 	getProjectionAndViewMatricesFromOrthoCamera( camera, setup.projection, setup.view );
 	setup.modelView = setup.view;
 	setup.modelViewProj = setup.projection * setup.modelView;

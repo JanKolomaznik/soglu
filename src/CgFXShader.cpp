@@ -1,7 +1,12 @@
+#include <GL/glew.h>
 #include "soglu/CgFXShader.hpp"
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 
+#include "soglu/GLTextureImage.hpp"
+#include "soglu/Camera.hpp"
+#include "soglu/BoundingBox.hpp"
+#include "soglu/GLViewSetup.hpp"
 
 namespace soglu
 {
@@ -13,7 +18,7 @@ void
 initializeCg()
 {//TODO - check if design with global variables is proper one
 	if ( gIsCgInitialized ) {
-		LOG( "Cg already initialized" );
+		SOGLU_LOG( "Cg already initialized" );
 		return;
 	}
 	gCgContext = cgCreateContext();
@@ -26,7 +31,7 @@ initializeCg()
 	checkForCgError("manage texture parameters");
 
 	gIsCgInitialized = true;
-	LOG( "Cg initialized" );
+	SOGLU_LOG( "Cg initialized" );
 }
 
 void
@@ -50,7 +55,7 @@ CgFXShader::initialize(//CGcontext   				&cgContext,
 
 	checkForCgError(boost::str(boost::format("creating cg effect from file \"%1%\".") %  effectFile));
 
-	LOG( "Cg effect \"" << effectFile.filename() << "\" loaded" );
+	SOGLU_LOG( "Cg effect \"" << effectFile.filename() << "\" loaded" );
 
 	CGtechnique cgTechnique = cgGetFirstTechnique(mCgEffect->get());
 	if ( !cgTechnique ) {
@@ -58,12 +63,12 @@ CgFXShader::initialize(//CGcontext   				&cgContext,
 	}
 	while (cgTechnique) {
 		std::string techniqueName = cgGetTechniqueName(cgTechnique);
-		checkForCgError(boost::str(boost::format("before validation of technique \"%1%\" from \"%2%\".") % techniqueName % effectFile));		
+		checkForCgError(boost::str(boost::format("before validation of technique \"%1%\" from \"%2%\".") % techniqueName % effectFile));
 		if ( cgValidateTechnique(cgTechnique) == CG_FALSE ) {
-			LOG( "\tTechnique " << techniqueName << " did not validate. Skipping." );
+			SOGLU_LOG( "\tTechnique " << techniqueName << " did not validate. Skipping." );
 		} else {
 
-			LOG( "\tTechnique " << techniqueName << " validated. Enabling." );
+			SOGLU_LOG( "\tTechnique " << techniqueName << " validated. Enabling." );
 			mCgTechniques[ techniqueName ] = cgTechnique;
 		}
 		checkForCgError(boost::str(boost::format("after validation of technique \"%1%\" from \"%2%\".") % techniqueName % effectFile));
@@ -85,7 +90,93 @@ CgFXShader::finalize()
 	}
 }
 
-void 
+void
+CgFXShader::setParameter( std::string aName, const GLViewSetup &aViewSetup )
+{
+	assert(isInitialized());
+	setParameter(aName + ".modelViewProj", glm::fmat4x4(aViewSetup.modelViewProj) );
+	setParameter(aName + ".modelMatrix", glm::fmat4x4(aViewSetup.model) );
+	setParameter(aName + ".projMatrix", glm::fmat4x4(aViewSetup.projection) );
+	setParameter(aName + ".viewMatrix", glm::fmat4x4(aViewSetup.view) );
+}
+
+void
+CgFXShader::setParameter( std::string aName, const soglu::Planef &aPlane )
+{
+	assert(isInitialized());
+	setParameter(aName + ".point",aPlane.point());
+
+	setParameter(aName + ".normal", aPlane.normal());
+}
+
+void
+CgFXShader::setParameter( std::string aName, const GLTextureImage &aTexture )
+{
+	assert(isInitialized());
+	setTextureParameter( aName, aTexture.GetTextureGLID() );
+}
+
+void
+CgFXShader::setParameter( std::string aName, const GLTextureImageTyped<3> &aImage )
+{
+	assert(isInitialized());
+	setTextureParameter(aName + ".data", aImage.GetTextureGLID() );
+
+	setParameter(aName + ".size", aImage.getExtents().maximum - aImage.getExtents().minimum ); //TODO
+
+	setParameter(aName + ".realSize", aImage.getExtents().realMaximum - aImage.getExtents().realMinimum );
+
+	setParameter(aName + ".realMinimum", aImage.getExtents().realMinimum );
+
+	setParameter(aName + ".realMaximum", aImage.getExtents().realMaximum );
+}
+/*
+void
+CgFXShader::setParameter(std::string aName, const GLTransferFunctionBuffer1D &aTransferFunction )
+{
+	assert(isInitialized());
+	setTextureParameter(aName + ".data", aTransferFunction.getTextureID() );
+
+	setParameter(aName + ".interval", aTransferFunction.getMappedInterval() );
+
+	setParameter(aName + ".sampleCount", aTransferFunction.getSampleCount() );
+}
+*/
+void
+CgFXShader::setParameter(std::string aName, const PerspectiveCamera &aCamera)
+{
+	setParameter(aName + ".eyePosition", aCamera.eyePosition());
+
+	setParameter(aName + ".viewDirection", aCamera.targetDirection());
+
+	setParameter(aName + ".upDirection", aCamera.upDirection());
+}
+
+void
+CgFXShader::setParameter(std::string aName, const BoundingBox3D &aValue)
+{
+	assert(isInitialized());
+	CGparameter cgParameter = cgGetNamedEffectParameter(mCgEffect->get(), (aName + ".vertices").data());
+//	assert( )	TODO check type;
+
+	cgSetParameterValuefr( cgParameter, 3*8, &(aValue.vertices[0].x) );
+}
+
+void
+CgFXShader::setTextureParameter(std::string aName, GLuint aTexture)
+{
+	assert(isInitialized());
+	CGparameter cgParameter = cgGetNamedEffectParameter(mCgEffect->get(), aName.data());
+//	assert( )	TODO check type;
+
+	cgGLSetupSampler( cgParameter, aTexture );
+	//cgSetSamplerState( cgParameter );
+}
+
+
+
+
+void
 checkForCgError( const std::string &situation, CGcontext &context  )
 {
 	CGerror error = cgGetError();
@@ -96,7 +187,7 @@ checkForCgError( const std::string &situation, CGcontext &context  )
 		if (msg) {
 			errString = msg;
 		}
-		
+
 		std::string message = situation + errString;
 		const char *listing = cgGetLastListing(context);
 		if( listing ) {

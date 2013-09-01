@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 //#include <glm/ext.hpp>
 
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include <Cg/cg.h>    /* Can't include this?  Is Cg Toolkit installed! */
 #include <Cg/cgGL.h>
 #include <string>
@@ -17,14 +17,15 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
-#include <boost/graph/graph_concepts.hpp>
+//#include <boost/graph/graph_concepts.hpp>
 
 
-#include "soglu/GLViewSetup.hpp"
-#include "soglu/BoundingBox.hpp"
-#include "soglu/Primitives.hpp"
-#include "soglu/OGLTools.hpp"
-#include "soglu/GLTextureImage.hpp"
+//#include "soglu/GLViewSetup.hpp"
+//#include "soglu/BoundingBox.hpp"
+#include <soglu/Primitives.hpp>
+#include <soglu/Attributes.hpp>
+//#include "soglu/OGLTools.hpp"
+//#include "soglu/GLTextureImage.hpp"
 
 #define SOGLU_D_PRINT(ARG)
 #define SOGLU_LOG(ARG)
@@ -35,18 +36,18 @@ class RAII : private boost::noncopyable
 public:
 	template< typename TAcquisition, typename TRelease >
 	RAII( TAcquisition aAcquisition, TRelease aRelease, bool aAcquire = true ): mAcquisition( aAcquisition ), mRelease( aRelease ), mAcquired( false )
-	{ 
+	{
 		if ( aAcquire ) {
 			acquire();
 		}
-		
+
 	}
-	
+
 	~RAII()
 	{
 		release();
 	}
-	
+
 	void
 	acquire()
 	{
@@ -55,7 +56,7 @@ public:
 			mAcquired = true;
 		}
 	}
-	
+
 	void
 	release()
 	{
@@ -64,7 +65,7 @@ public:
 			mAcquired = false;
 		}
 	}
-	
+
 protected:
 	boost::function< void() > mAcquisition;
 	boost::function< void() > mRelease;
@@ -76,21 +77,21 @@ class ResourceGuard : private boost::noncopyable
 {
 public:
 	ResourceGuard( boost::function< TResource() > aAcquisition, boost::function< void(TResource &) > aRelease, bool aAcquire = true ): mAcquisition( aAcquisition ), mRelease( aRelease ), mAcquired( false ), mValid( true )
-	{ 
+	{
 		if ( aAcquire ) {
 			acquire();
 		}
-		
+
 	}
 
 	ResourceGuard(): mAcquired( false ), mValid( false )
 	{}
-	
+
 	~ResourceGuard()
 	{
 		release();
 	}
-	
+
 	void
 	acquire()
 	{
@@ -98,35 +99,35 @@ public:
 			throw std::string( "acquire() failed. Resource guard not valid" ); //TODO
 		}
 		if( ! mAcquired ) {
-			D_PRINT( "Acquiring resource" );
+			SOGLU_D_PRINT( "Acquiring resource" );
 			mResource = mAcquisition();
 			mAcquired = true;
 		}
 	}
-	
+
 	void
 	release()
 	{
-		
+
 		if( mAcquired ) {
 			/*if( !mValid ) {
 				throw ErrorHandling::EObjectUnavailable( "Resource guard not valid" );
 			}*/
-			D_PRINT( "Releasing resource" );
+			SOGLU_D_PRINT( "Releasing resource" );
 			mRelease( mResource );
 			mAcquired = false;
 		}
 	}
 	TResource &
 	get()
-	{ 
+	{
 		if( !mValid ) {
 			throw std::string( "get() failed. Resource guard not valid" );
 		}
 		if( !mAcquired ) {
 			throw std::string( "Resource not acquired!" );
 		}
-		return mResource; 
+		return mResource;
 	}
 protected:
 
@@ -151,6 +152,12 @@ makeResourceGuardPtr( boost::function< TResource() > aAcquisition, boost::functi
 
 namespace soglu {
 
+class BoundingBox3D;
+class GLViewSetup;
+struct GLTextureImage;
+class PerspectiveCamera;
+template < size_t Dim > struct GLTextureImageTyped;
+
 extern bool gIsCgInitialized;
 extern CGcontext gCgContext;
 
@@ -170,7 +177,7 @@ public:
 	{
 		return mReport.c_str();
 	}
-	
+
 protected:
 	std::string mEffectName;
 	std::string mReport;
@@ -178,12 +185,12 @@ protected:
 
 struct EObjectNotInitialized {};
 
-void 
+void
 checkForCgError( const std::string &situation, CGcontext &context = gCgContext );
 
 
 
-class CgFXShader 
+class CgFXShader
 {
 public:
 
@@ -200,38 +207,38 @@ public:
 	template<typename TParameterType>
 	void
 	setParameter(std::string aName, const TParameterType *aValue, size_t aCount);
-	
+
 	//TODO - modify
 	void
 	setParameter(std::string aName, const GLViewSetup &aViewSetup);
-	
+
 	void
 	setParameter(std::string aName, const BoundingBox3D &aValue);
-	
+
 	void
 	setTextureParameter(std::string aName, GLuint aTexture);
 
 	void
 	setParameter(std::string aName, const Planef &aPlane);
-	
+
 	void
 	setParameter(std::string aName, const GLTextureImage &aTexture);
 
 	void
-	setParameter(std::string aName, const GLTextureImage3D &aImage);
+	setParameter(std::string aName, const GLTextureImageTyped<3> &aImage);
 	/*
 	void
 	setParameter(std::string aName, const GLTransferFunctionBuffer1D &aTransferFunction);
 	*/
 	void
-	setParameter(std::string aName, const Camera &aCamera);
+	setParameter(std::string aName, const PerspectiveCamera &aCamera);
 
 	template< typename TGeometryRenderFunctor >
 	void
 	executeTechniquePass( std::string aTechniqueName, TGeometryRenderFunctor aDrawGeometry );
-	
+
 	bool
-	isInitialized() const 
+	isInitialized() const
 	{ return mEffectInitialized; }
 protected:
 
@@ -295,7 +302,7 @@ namespace detail {
 	{
 		cgSetParameterValueir(aParameter, aSize, aValue);
 	}
-	
+
 	//-------------------------------------------------------------------------
 
 	inline void
@@ -309,13 +316,13 @@ namespace detail {
 	{
 		cgSetParameterValuedr(aParameter, 2, glm::value_ptr(aVec2));
 	}
-	
+
 	inline void
 	parameterSetter(CGparameter aParameter, const glm::ivec2 &aVec2)
 	{
 		cgSetParameterValueir(aParameter, 2, glm::value_ptr(aVec2));
 	}
-	
+
 	inline void
 	parameterSetter(CGparameter aParameter, const glm::fvec3 &aVec3)
 	{
@@ -333,7 +340,7 @@ namespace detail {
 	{
 		cgSetParameterValueir(aParameter, 3, glm::value_ptr(aVec3));
 	}
-	
+
 	//-------------------------------------------------------------------------
 /*	template<size_t tDim>
 	inline void
@@ -341,7 +348,7 @@ namespace detail {
 	{
 		cgSetParameterValuefr(aParameter, tDim, aValue.GetData());
 	}
-	
+
 	template<size_t tDim>
 	inline void
 	parameterSetter(CGparameter aParameter, const Vector<int, tDim> &aValue)
@@ -382,88 +389,6 @@ CgFXShader::setParameter(std::string aName, const TParameterType *aValue, size_t
 	detail::parameterSetter(cgParameter, aValue, aCount);
 }
 
-inline void
-CgFXShader::setParameter( std::string aName, const GLViewSetup &aViewSetup )
-{
-	assert(isInitialized());
-	setParameter(aName + ".modelViewProj", glm::fmat4x4(aViewSetup.modelViewProj) );
-	setParameter(aName + ".modelMatrix", glm::fmat4x4(aViewSetup.model) );
-	setParameter(aName + ".projMatrix", glm::fmat4x4(aViewSetup.projection) );
-	setParameter(aName + ".viewMatrix", glm::fmat4x4(aViewSetup.view) );
-}
-
-inline void
-CgFXShader::setParameter( std::string aName, const soglu::Planef &aPlane )
-{
-	assert(isInitialized());
-	setParameter(aName + ".point",aPlane.point());
-
-	setParameter(aName + ".normal", aPlane.normal());
-}
-
-inline void
-CgFXShader::setParameter( std::string aName, const GLTextureImage &aTexture )
-{
-	assert(isInitialized());
-	setTextureParameter( aName, aTexture.GetTextureGLID() );
-}
-
-inline void
-CgFXShader::setParameter( std::string aName, const GLTextureImage3D &aImage )
-{
-	assert(isInitialized());
-	setTextureParameter(aName + ".data", aImage.GetTextureGLID() );
-
-	setParameter(aName + ".size", aImage.getExtents().maximum - aImage.getExtents().minimum ); //TODO
-
-	setParameter(aName + ".realSize", aImage.getExtents().realMaximum - aImage.getExtents().realMinimum );
-
-	setParameter(aName + ".realMinimum", aImage.getExtents().realMinimum );
-
-	setParameter(aName + ".realMaximum", aImage.getExtents().realMaximum );
-}
-/*
-inline void
-CgFXShader::setParameter(std::string aName, const GLTransferFunctionBuffer1D &aTransferFunction )
-{
-	assert(isInitialized());
-	setTextureParameter(aName + ".data", aTransferFunction.getTextureID() );
-
-	setParameter(aName + ".interval", aTransferFunction.getMappedInterval() );
-
-	setParameter(aName + ".sampleCount", aTransferFunction.getSampleCount() );
-}
-*/
-inline void
-CgFXShader::setParameter(std::string aName, const Camera &aCamera)
-{
-	setParameter(aName + ".eyePosition", aCamera.eyePosition());
-	
-	setParameter(aName + ".viewDirection", aCamera.targetDirection());
-	
-	setParameter(aName + ".upDirection", aCamera.upDirection());
-}
-
-inline void
-CgFXShader::setParameter(std::string aName, const BoundingBox3D &aValue)
-{
-	assert(isInitialized());
-	CGparameter cgParameter = cgGetNamedEffectParameter(mCgEffect->get(), (aName + ".vertices").data());
-//	assert( )	TODO check type;
-
-	cgSetParameterValuefr( cgParameter, 3*8, &(aValue.vertices[0].x) );
-}
-
-inline void
-CgFXShader::setTextureParameter(std::string aName, GLuint aTexture)
-{
-	assert(isInitialized());
-	CGparameter cgParameter = cgGetNamedEffectParameter(mCgEffect->get(), aName.data());
-//	assert( )	TODO check type;
-
-	cgGLSetupSampler( cgParameter, aTexture );
-	//cgSetSamplerState( cgParameter );
-}
 
 template< typename TGeometryRenderFunctor >
 void
@@ -474,7 +399,7 @@ CgFXShader::executeTechniquePass( std::string aTechniqueName, TGeometryRenderFun
 	}
 	GLPushAtribs pushAttribs; // GL_CHECKED_CALL( glPushAttrib( GL_ALL_ATTRIB_BITS ) );
 
-	
+
 	std::map< std::string, CGtechnique >::iterator it = mCgTechniques.find( aTechniqueName );
 	if ( it == mCgTechniques.end() ) {
 		throw CgException(mEffectName, std::string("Unavailable technique : ") + aTechniqueName);

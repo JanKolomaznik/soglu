@@ -143,6 +143,11 @@ FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFor
 	mSize.y = aHeight;
 }
 
+void
+FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight)
+{
+	Resize(aWidth, aHeight, GL_RGBA32F);
+}
 
 } /*namespace soglu*/
 

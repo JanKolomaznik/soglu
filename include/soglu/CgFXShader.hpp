@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined _WIN64 || defined _WIN32
+#include <windows.h>
+#endif
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtc/type_ptr.hpp>

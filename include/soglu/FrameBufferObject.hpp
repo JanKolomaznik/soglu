@@ -40,7 +40,10 @@ public:
 	Unbind();
 
 	void
-	Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat = GL_RGBA32F );
+	Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat );
+
+	void
+	Resize( unsigned aWidth, unsigned aHeight);
 
 	glm::uvec2
 	GetSize()const

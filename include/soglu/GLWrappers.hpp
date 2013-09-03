@@ -1,11 +1,19 @@
 #pragma once
 
+#if defined _WIN64 || defined _WIN32
+#define NOMINMAX
+#include <windows.h>
+#undef near
+#undef far
+#endif
+
 #include <GL/gl.h>
 #include <soglu/ErrorHandling.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <cstdint>
 
 namespace soglu {
 

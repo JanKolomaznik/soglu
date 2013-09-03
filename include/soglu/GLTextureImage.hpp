@@ -1,9 +1,17 @@
 #pragma once
 
+#if defined _WIN64 || defined _WIN32
+#define NOMINMAX
+#include <windows.h>
+#undef near
+#undef far
+#endif
+
+#include <GL/gl.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/cast.hpp>
-#include <GL/gl.h>
 /*#include "MedV4D/Common/Common.h"
 #include "MedV4D/GUI/utils/OGLTools.h"
 #include "MedV4D/Imaging/AImageRegion.h"

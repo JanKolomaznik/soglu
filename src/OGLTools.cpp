@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include "soglu/OGLTools.hpp"
 #include "soglu/OGLDrawing.hpp"
+#include "soglu/ErrorHandling.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -9,6 +10,17 @@
 
 namespace soglu
 {
+
+
+void
+checkForGLError(const std::string &situation) {
+	GLenum errorCode = glGetError();
+	if (errorCode != GL_NO_ERROR) {
+		const char *string = (const char *)gluErrorString(errorCode);
+		SOGLU_DEBUG_PRINT(situation << ": " << string);
+		//throw GLException(); //TODO proper throwing with exception
+	}
+}
 
 glm::dvec3
 getPointFromScreenCoordinates(glm::fvec2 aScreenCoords, const GLViewSetup &aViewSetup, double aZValue)
@@ -90,6 +102,7 @@ getImageBufferFromTexture( uint32 &aWidth, uint32 &aHeight, boost::shared_array<
 void
 initOpenGL()
 {
+	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
 		throw "EInitError";//( "GLEW" );

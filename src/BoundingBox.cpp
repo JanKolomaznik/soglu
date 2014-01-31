@@ -1,8 +1,10 @@
 #include <soglu/BoundingBox.hpp>
 #include <soglu/OGLTools.hpp>
+#include <soglu/GLMUtils.hpp>
 #include <soglu/GeometricAlgorithms.hpp>
 #include <glm/gtx/projection.hpp>
 
+#include <iostream>
 namespace soglu
 {
 
@@ -29,7 +31,7 @@ GetBBoxEdgePointA( unsigned idx )
 		return idx % 4;
 	}
 	return idx - 4;*/
-	return edgeVertexAMapping[idx]; 
+	return edgeVertexAMapping[idx];
 }
 
 static unsigned
@@ -47,11 +49,11 @@ GetBBoxEdgePointB( unsigned idx )
 		return idx - 3;
 	}
 	return 4;*/
-	return edgeVertexBMapping[idx]; 
+	return edgeVertexBMapping[idx];
 }
 
 void
-getBBoxMinMaxDistance( 
+getBBoxMinMaxDistance(
 			const BoundingBox3D	&bbox,
 			const glm::fvec3 	&eyePoint,
 			const glm::fvec3 	&direction,
@@ -80,9 +82,9 @@ getBBoxMinMaxDistance(
 }
 
 unsigned
-getPlaneVerticesInBoundingBox( 
-		const BoundingBox3D	&bbox, 
-		const glm::fvec3 	&planePoint, 
+getPlaneVerticesInBoundingBox(
+		const BoundingBox3D	&bbox,
+		const glm::fvec3 	&planePoint,
 		const glm::fvec3 	&planeNormal,
 		unsigned			minId,
 	       	glm::fvec3 		vertices[]
@@ -91,23 +93,29 @@ getPlaneVerticesInBoundingBox(
 	//Vector< float, 3 > center;
 	unsigned idx = 0;
 	for( unsigned i = 0; i < 12; ++i ) {
-		unsigned lineAIdx = GetBBoxEdgePointA( edgeOrder[minId][i] ); 
+		unsigned lineAIdx = GetBBoxEdgePointA( edgeOrder[minId][i] );
 		unsigned lineBIdx = GetBBoxEdgePointB( edgeOrder[minId][i] );
-		if( ie_UNIQUE_INTERSECTION == 
-			lineSegmentPlaneIntersection( bbox.vertices[ lineAIdx ], bbox.vertices[ lineBIdx ], planePoint, planeNormal, vertices[idx] ) 
-		  ) {
+		if( ie_UNIQUE_INTERSECTION ==
+			lineSegmentPlaneIntersection( bbox.vertices[ lineAIdx ], bbox.vertices[ lineBIdx ], planePoint, planeNormal, vertices[idx] )
+		  )
+		{
+			/*std::cout << glm::to_string(bbox.vertices[ lineAIdx ])
+				<< "; " << glm::to_string(bbox.vertices[ lineBIdx ])
+				<< "; Plane Point " << glm::to_string(planePoint)
+			       	<< "; " << glm::to_string(planeNormal)
+				<< "\n";*/
 			++idx;
 			//center += vertices[idx];
 			if( idx == 6 ) break;
-		}		
+		}
 	}
 	SOGLU_ASSERT( idx <= 6 ) //plane and box edges can have 6 intersections maximally
 	return idx;
 }
 
 unsigned
-getPlaneVerticesInBoundingBox( 
-		const BoundingBox3D	&bbox, 
+getPlaneVerticesInBoundingBox(
+		const BoundingBox3D	&bbox,
 		const Planef		&plane,
 		unsigned			minId,
 		glm::fvec3		vertices[]
@@ -120,12 +128,11 @@ getPlaneVerticesInBoundingBox(
 			minId,
 			vertices
 			);
-
 }
 
 unsigned
-getPlaneVerticesInBoundingBox( 
-		const BoundingBox3D	&bbox, 
+getPlaneVerticesInBoundingBox(
+		const BoundingBox3D	&bbox,
 		const Planef		&plane,
 		glm::fvec3		vertices[]
 		)

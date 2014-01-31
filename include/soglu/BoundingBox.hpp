@@ -51,16 +51,16 @@ struct BoundingBox3D
 /*inline std::ostream &
 operator<<( std::ostream & s, const BoundingBox3D &aBBox )
 {
-//	s << "BBox3d[ " << aBBox.getMin() << "; "  << aBBox.getMin() << " ]";
+	s << "BBox3d[ " << aBBox.getMin() << "; "  << aBBox.getMax() << " ]";
 	return s;
 }*/
 
 void
-getBBoxMinMaxDistance( 
-			const BoundingBox3D	&bbox, 
-			const glm::fvec3 	&eyePoint, 
-			const glm::fvec3  	&direction, 
-			float 			&min, 
+getBBoxMinMaxDistance(
+			const BoundingBox3D	&bbox,
+			const glm::fvec3 	&eyePoint,
+			const glm::fvec3  	&direction,
+			float 			&min,
 			float 			&max,
 		       	unsigned		&minId,
 		       	unsigned		&maxId
@@ -68,25 +68,25 @@ getBBoxMinMaxDistance(
 
 
 unsigned
-getPlaneVerticesInBoundingBox( 
-		const soglu::BoundingBox3D		&bbox, 
-		const glm::fvec3 	&planePoint, 
+getPlaneVerticesInBoundingBox(
+		const soglu::BoundingBox3D		&bbox,
+		const glm::fvec3 	&planePoint,
 		const glm::fvec3 	&planeNormal,
 		unsigned			minId,
 	       	glm::fvec3 		vertices[]
 		);
 
 unsigned
-getPlaneVerticesInBoundingBox( 
-		const soglu::BoundingBox3D		&bbox, 
+getPlaneVerticesInBoundingBox(
+		const soglu::BoundingBox3D		&bbox,
 		const soglu::Planef			&plane,
 		unsigned			minId,
 	       	glm::fvec3 		vertices[]
 		);
 
 unsigned
-getPlaneVerticesInBoundingBox( 
-		const soglu::BoundingBox3D		&bbox, 
+getPlaneVerticesInBoundingBox(
+		const soglu::BoundingBox3D		&bbox,
 		const soglu::Planef			&plane,
 	       	glm::fvec3 		vertices[]
 		);

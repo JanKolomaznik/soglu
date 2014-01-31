@@ -2,7 +2,17 @@
 
 #include <glm/gtc/type_precision.hpp>
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <cassert>
+
+template<typename T>
+inline std::ostream &
+operator<< (std::ostream &out, const glm::detail::tvec3<T> &vec) {
+    out << glm::to_string(vec);
+    return out;
+}
+
 
 namespace soglu {
 

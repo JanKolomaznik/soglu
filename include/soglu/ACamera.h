@@ -7,15 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_precision.hpp>
 #include <glm/ext.hpp>
-
-inline std::ostream &
-operator<< (std::ostream &out, const glm::vec3 &vec) {
-    out << "[" 
-        << vec.x << " " << vec.y << " "<< vec.z 
-        << "]";
-
-    return out;
-}
+#include <soglu/GLMUtils.hpp>
 
 inline glm::fvec3
 vectorProjection(const glm::fvec3 &u, const glm::fvec3 &v)
@@ -54,7 +46,7 @@ public:
 	typedef /*Vector< FloatType, 3 >*/glm::fvec3 Position;
 	typedef /*Vector< FloatType, 3 >*/glm::fvec3 Direction;
 
-	ACamera( const Position &eye = Position(), const Position &center = Position() ) 
+	ACamera( const Position &eye = Position(), const Position &center = Position() )
 		: mTargetPos( center ), mEyePos( eye ), mUpDirection( 0.0f, 1.0f, 0.0f ), mTargetDirection( center - eye ), mRightDirection( 1.0f, 0.0f, 0.0f ), mZNear( 0.5f ), mZFar( 10000 )
 		/*mFieldOfViewY( 45.0f ), mAspectRatio( 1.0f )*/
 	{
@@ -78,7 +70,7 @@ public:
 		mTargetPos = pos;
 		updateDistance();
 		updateTargetDirection();
-		
+
 		mUpDirection = glm::orthonormalize(mUpDirection, mTargetDirection);
 
 		updateRightDirection();
@@ -99,7 +91,7 @@ public:
 
 		mUpDirection = aUpDirection;
 		glm::normalize(mUpDirection);
-		
+
 		mTargetDirection = glm::orthonormalize( mTargetDirection, mUpDirection );
 
 		updateRightDirection();
@@ -108,7 +100,7 @@ public:
 
 	void
 	setUpDirection( const Direction & );
-		
+
 	const Direction &
 	upDirection() const
 		{ return mUpDirection; }
@@ -124,13 +116,13 @@ public:
 	FloatType
 	targetDistance()
 	{ return mTargetDistance; }
-	
+
 	FloatType
 	aspectRatio() const
 	{
 		return mAspectRatio;
 	}
-	
+
 	void
 	setAspectRatio(FloatType aAspectRatio)
 	{
@@ -162,7 +154,7 @@ public:
 	{
 		return mZNear;
 	}
-	
+
 	FloatType
 	far()const
 	{
@@ -174,21 +166,21 @@ protected:
 
 	void
 	updateDistance()
-	{ 
+	{
 		mTargetDistance = glm::distance(mTargetPos, mEyePos);
 	}
 	void
 	updateTargetDirection()
-	{ 
+	{
 		mTargetDirection = mTargetPos - mEyePos;
 		mTargetDirection = glm::normalize(mTargetDirection);
 	}
 	void
 	updateRightDirection()
-	{ 
+	{
 		mRightDirection = glm::cross(mTargetDirection, mUpDirection);
 	}
-	
+
 	//Quaternion<FloatType>	mRotation;
 
 	Position		mTargetPos;
@@ -199,11 +191,11 @@ protected:
 	Direction		mTargetDirection;
 	Direction		mRightDirection;
 
- 	FloatType  		mTargetDistance; 
+ 	FloatType  		mTargetDistance;
 
 	/*FloatType  		mFieldOfViewY; */
  	FloatType  		mAspectRatio;
- 	FloatType  		mZNear; 
+ 	FloatType  		mZNear;
  	FloatType  		mZFar;
 };
 

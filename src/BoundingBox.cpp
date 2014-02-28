@@ -26,11 +26,6 @@ static unsigned
 GetBBoxEdgePointA( unsigned idx )
 {
 	SOGLU_ASSERT( idx < 12 ); //only 12 edges
-
-	/*if( idx < 8 ) {
-		return idx % 4;
-	}
-	return idx - 4;*/
 	return edgeVertexAMapping[idx];
 }
 
@@ -38,17 +33,6 @@ static unsigned
 GetBBoxEdgePointB( unsigned idx )
 {
 	SOGLU_ASSERT( idx < 12 ); //only 12 edges
-
-	/*if( idx < 4 ) {
-		return (idx + 1) % 4;
-	}
-	if( idx < 8 ) {
-		return idx;
-	}
-	if( idx < 11 ) {
-		return idx - 3;
-	}
-	return 4;*/
 	return edgeVertexBMapping[idx];
 }
 

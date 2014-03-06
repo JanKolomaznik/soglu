@@ -8,9 +8,36 @@
 #include <boost/format.hpp>
 
 
+#include <GL/glx.h>
+
+#include <unordered_map>
+
 namespace soglu
 {
 
+typedef GLXContext OpenGLContext;
+
+OpenGLContext getCurrentContext()
+{
+	std::cout << glXGetCurrentContext() << "\n";
+	return glXGetCurrentContext();
+}
+
+std::unordered_map<OpenGLContext, GLEWContext>  gGLEWContexts;
+
+} //namespace soglu
+
+
+GLEWContext *glewGetContext() {
+	auto it = soglu::gGLEWContexts.find(soglu::getCurrentContext());
+	if (it != std::end(soglu::gGLEWContexts)) {
+		return &(it->second);
+	}
+	return nullptr;
+}
+
+namespace soglu
+{
 
 void
 checkForGLError(const std::string &situation) {
@@ -102,8 +129,9 @@ getImageBufferFromTexture( uint32 &aWidth, uint32 &aHeight, boost::shared_array<
 void
 initOpenGL()
 {
+	gGLEWContexts[getCurrentContext()];
 	glewExperimental = GL_TRUE;
-	GLenum err = glewInit();
+	GLenum err = glewContextInit(glewGetContext());//glewInit();
 	if (GLEW_OK != err) {
 		throw "EInitError";//( "GLEW" );
 	}
@@ -120,6 +148,8 @@ initOpenGL()
 	LOG( "\tGLEW_VERSION_3_0 " << ((GLEW_VERSION_3_0) ? std::string("OK") : std::string("FAIL")) );
 	LOG( "\tGLEW_VERSION_3_1 " << ((GLEW_VERSION_3_1) ? std::string("OK") : std::string("FAIL")) );
 	LOG( "\tGLEW_VERSION_3_2 " << ((GLEW_VERSION_3_2) ? std::string("OK") : std::string("FAIL")) );*/
+	std::cout << "Primitive restart \n";
+	GL_CHECKED_CALL(glEnable(GL_PRIMITIVE_RESTART));
 }
 
 void

@@ -32,8 +32,8 @@ void
 FrameBufferObject::Initialize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat )
 {
 	SOGLU_ASSERT(isGLContextActive());
-	GL_CHECKED_CALL( glGenFramebuffersEXT( 1, &mFrameBufferObject ) );
-	GL_CHECKED_CALL( glGenRenderbuffersEXT( 1, &mDepthBuffer ) );
+	GL_CHECKED_CALL( glGenFramebuffers( 1, &mFrameBufferObject ) );
+	GL_CHECKED_CALL( glGenRenderbuffers( 1, &mDepthBuffer ) );
 	GL_CHECKED_CALL( glGenTextures( 1, &mColorTexture ) );
 
 	mInitialized = true;
@@ -45,9 +45,9 @@ FrameBufferObject::Finalize()
 {
 	if ( mInitialized ) {
 		SOGLU_ASSERT(isGLContextActive());
-		GL_CHECKED_CALL( glDeleteFramebuffersEXT( 1, &mFrameBufferObject ) );
+		GL_CHECKED_CALL( glDeleteFramebuffers( 1, &mFrameBufferObject ) );
 		GL_CHECKED_CALL( glDeleteTextures( 1, &mColorTexture ) );
-		GL_CHECKED_CALL( glDeleteRenderbuffersEXT( 1, &mDepthBuffer ) );
+		GL_CHECKED_CALL( glDeleteRenderbuffers( 1, &mDepthBuffer ) );
 	}
 	mInitialized = false;
 }
@@ -79,7 +79,7 @@ void
 FrameBufferObject::Bind()
 {
 	SOGLU_ASSERT( mInitialized );
-	GL_CHECKED_CALL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, mFrameBufferObject ) );
+	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, mFrameBufferObject ) );
 	mBinded = true;
 }
 
@@ -87,7 +87,7 @@ void
 FrameBufferObject::Unbind()
 {
 	SOGLU_ASSERT( mInitialized );
-	GL_CHECKED_CALL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ) );
+	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, 0 ) );
 	mBinded = false;
 }
 
@@ -96,13 +96,13 @@ FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFor
 {
 	SOGLU_ASSERT(isGLContextActive());
 	SOGLU_ASSERT ( mInitialized );
-	GL_CHECKED_CALL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, mFrameBufferObject ) );
+	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, mFrameBufferObject ) );
 
 	GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, mColorTexture ) );
-	GL_CHECKED_CALL( glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, mDepthBuffer ) );
+	GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, mDepthBuffer ) );
 
-	GL_CHECKED_CALL( glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, aWidth, aHeight ) );
-	GL_CHECKED_CALL( glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, 0 ) );
+	GL_CHECKED_CALL( glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH_COMPONENT, aWidth, aHeight ) );
+	GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, 0 ) );
 
 	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
@@ -122,22 +122,22 @@ FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFor
 				) );
 	GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, 0 ) );
 
-	GL_CHECKED_CALL( glFramebufferRenderbufferEXT(
-				GL_FRAMEBUFFER_EXT,
-				GL_DEPTH_ATTACHMENT_EXT,
-				GL_RENDERBUFFER_EXT,
+	GL_CHECKED_CALL( glFramebufferRenderbuffer(
+				GL_FRAMEBUFFER,
+				GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER,
 				mDepthBuffer
 				) );
 
-	GL_CHECKED_CALL( glFramebufferTexture2DEXT(
-				GL_FRAMEBUFFER_EXT,
-				GL_COLOR_ATTACHMENT0_EXT,
+	GL_CHECKED_CALL( glFramebufferTexture2D(
+				GL_FRAMEBUFFER,
+				GL_COLOR_ATTACHMENT0,
 				GL_TEXTURE_2D,
 				mColorTexture,
 				0
 				) );
 
-	GL_CHECKED_CALL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ) );
+	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, 0 ) );
 
 	mSize.x = aWidth;
 	mSize.y = aHeight;

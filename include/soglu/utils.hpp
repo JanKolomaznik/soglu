@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Cg/cg.h>    /* Can't include this?  Is Cg Toolkit installed! */
-#include <Cg/cgGL.h>
-
+#include <soglu/ErrorHandling.hpp>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -10,18 +8,21 @@
 
 namespace soglu {
 	
-
-
-struct GLPushAtribs
+template <typename TValue, typename TTag, TValue tInvalidValue>
+struct GLValueWrapper
 {
-	GLPushAtribs(GLbitfield attribs = GL_ALL_ATTRIB_BITS )
-	{
-		GL_CHECKED_CALL( glPushAttrib( attribs ) );
-	}
-	~GLPushAtribs()
-	{
-		GL_CHECKED_CALL( glPopAttrib() );
-	}
+	typedef TTag Tag;
+	GLValueWrapper() : value(tInvalidValue) {}
+	GLValueWrapper(const TValue &aValue) : value(aValue) {}
+	operator bool() const { return tInvalidValue != value; }
+
+	TValue value;
 };
+
+struct TextureTag {};
+struct TextureUnitTag {};
+
+typedef GLValueWrapper<unsigned int, TextureTag, 0> TextureId;
+typedef GLValueWrapper<unsigned int, TextureUnitTag, 0> TextureUnitId;
 
 } //namespace soglu

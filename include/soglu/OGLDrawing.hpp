@@ -1,24 +1,32 @@
 #pragma once
 
-/*#include "MedV4D/Common/Common.h"
-#include "MedV4D/Common/Sphere.h"
-#include "MedV4D/GUI/utils/OGLTools.h"
-#include "MedV4D/Imaging/AImage.h"
-#include "MedV4D/Imaging/ImageRegion.h"
-#include "MedV4D/Imaging/PointSet.h"
-#include "MedV4D/Imaging/Mesh.h"
-#include "MedV4D/Imaging/VertexInfo.h"
-#include "MedV4D/Imaging/FaceInfo.h"
-#include "MedV4D/GUI/utils/ViewConfiguration.h"
-#include "MedV4D/GUI/utils/Camera.h"
-#include "MedV4D/GUI/utils/OrthoCamera.h"
-#include "MedV4D/GUI/utils/DrawingTools.h"*/
+#include <vector>
 
 #include <soglu/BoundingBox.hpp>
 #include <soglu/GLWrappers.hpp>
 #include <soglu/Primitives.hpp>
+#include <soglu/GLSLShader.hpp>
 
 namespace soglu {
+
+typedef int GLPrimitiveType;
+
+struct VertexIndexBuffers
+{
+	std::vector<glm::fvec3> vertices;
+	std::vector<unsigned int> indices;
+	unsigned int primitiveRestartIndex;
+};
+
+void
+drawVertexIndexBuffers(
+	const VertexIndexBuffers &aData,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	);
+
+VertexIndexBuffers
+generateBoundingBoxBuffers(const BoundingBox3D &aBBox);
 
 void
 drawBoundingBox(const BoundingBox3D &aBBox);

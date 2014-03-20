@@ -1,10 +1,12 @@
 #pragma once
 
 #if defined _WIN64 || defined _WIN32
-#define NOMINMAX
-#include <windows.h>
-#undef near
-#undef far
+#	ifndef NOMINMAX
+#		define NOMINMAX
+#	endif //NOMINMAX
+#	include <windows.h>
+#	undef near
+#	undef far
 #endif
 
 #include <GL/gl.h>
@@ -20,6 +22,7 @@
 
 //#include <soglu/OGLTools.hpp>
 #include <cassert>
+#include <soglu/utils.hpp>
 #include <soglu/GLMUtils.hpp>
 #include <soglu/ErrorHandling.hpp>
 
@@ -57,7 +60,7 @@ struct GLTextureImage
 		DeleteTexture();
 	}
 
-	GLuint
+	TextureId
 	GetTextureGLID() const
 	{ return _gltextureID; }
 
@@ -81,7 +84,7 @@ struct GLTextureImage
 		if( _gltextureID != 0 ) {
 			//D_PRINT( "Deleting texture id = " << _gltextureID );
 			//ASSERT( isGLContextActive() );
-			GL_CHECKED_CALL( glDeleteTextures( 1, &_gltextureID ) );
+			GL_CHECKED_CALL( glDeleteTextures( 1, &(_gltextureID.value) ) );
 			_gltextureID = 0;
 		}
 	}
@@ -135,7 +138,7 @@ protected:
 
 	bool				_linearInterpolation;
 	//M4D::Imaging::AImage::Ptr	_image;
-	GLuint				_gltextureID;
+	soglu::TextureId				_gltextureID;
 };
 
 template < size_t Dim >

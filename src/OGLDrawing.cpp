@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include <algorithm>
+
 #ifdef __APPLE__
 #include <OpenGL/glu.h>
 #else
@@ -13,6 +15,41 @@
 
 namespace soglu {
 
+void
+drawVertexIndexBuffers(
+	const VertexIndexBuffers &aData,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	)
+{
+	SOGLU_ASSERT(GL_VERSION_3_1);
+	SOGLU_ASSERT(glPrimitiveRestartIndex != NULL);
+
+	GL_CHECKED_CALL(glEnable(GL_PRIMITIVE_RESTART));
+	GL_CHECKED_CALL(glPrimitiveRestartIndex(aData.primitiveRestartIndex));
+
+	GLuint vertexVBO;
+	GLuint vertexVAO;
+	glGenBuffers(1, &vertexVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.vertices.size(), (GLfloat*) aData.vertices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenVertexArrays(1, &vertexVAO);
+    glBindVertexArray(vertexVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+    glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(aAttributeLocation);
+
+	glDrawElements(aPrimitiveType, int(aData.indices.size()), GL_UNSIGNED_INT, aData.indices.data());
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &vertexVBO);
+	glBindVertexArray(0);
+    glDeleteVertexArrays(1, &vertexVAO);
+	GL_CHECKED_CALL("drawVertexIndexBuffers");
+}
 
 void
 drawTexturedQuad( const glm::fvec2 &point1, const glm::fvec2 &point3 )
@@ -52,6 +89,27 @@ drawRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3)
 
 		GLVertexVector(point4);
 	glEnd();
+}
+
+VertexIndexBuffers
+generateBoundingBoxBuffers(const BoundingBox3D &aBBox)
+{
+	static const unsigned restartIndex = 10;
+	static const std::array<unsigned, 21> indices = { 
+		0, 1, 2, 3, 7, 6, 5, 4, 0, 
+		restartIndex, 0, 3, 
+		restartIndex, 1, 5, 
+		restartIndex, 2, 6, 
+		restartIndex, 4, 7 };
+
+	VertexIndexBuffers result;
+	result.vertices.resize(8);
+	result.indices.resize(21);
+	std::copy(std::begin(aBBox.vertices), std::end(aBBox.vertices), std::begin(result.vertices));
+	result.primitiveRestartIndex = restartIndex;
+	std::copy(std::begin(indices), std::end(indices), std::begin(result.indices));
+	
+	return result;
 }
 
 void

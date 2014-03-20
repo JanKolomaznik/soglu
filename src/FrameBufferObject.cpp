@@ -31,6 +31,7 @@ FrameBufferObject::Initialize( unsigned aWidth, unsigned aHeight )
 void
 FrameBufferObject::Initialize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat )
 {
+	checkForGLError("Before framebuffer init.");
 	SOGLU_ASSERT(isGLContextActive());
 	GL_CHECKED_CALL( glGenFramebuffers( 1, &mFrameBufferObject ) );
 	GL_CHECKED_CALL( glGenRenderbuffers( 1, &mDepthBuffer ) );
@@ -104,11 +105,11 @@ FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFor
 	GL_CHECKED_CALL( glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH_COMPONENT, aWidth, aHeight ) );
 	GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, 0 ) );
 
-	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	//GL_CHECKED_CALL(glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE ));
+	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP ));
+	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP ));
+	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST ));
+	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ));
 	GL_CHECKED_CALL( glTexImage2D(
 				GL_TEXTURE_2D,
 				0,

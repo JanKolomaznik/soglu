@@ -10,12 +10,31 @@
 
 namespace soglu
 {
+#ifdef WIN32
+typedef HGLRC OpenGLContext;
+OpenGLContext getCurrentContext()
+{
+	return wglGetCurrentContext();
+}
+#else
+typedef GLXContext OpenGLContext;
+OpenGLContext getCurrentContext()
+{
+	return glXGetCurrentContext();
+}
+#endif
 
+bool
+isGLContextActive()
+{
+	return getCurrentContext() != 0;
+}
 
 void
 checkForGLError(const std::string &situation) {
-	GLenum errorCode = glGetError();
-	if (errorCode != GL_NO_ERROR) {
+	GLenum errorCode = GL_NO_ERROR;
+	SOGLU_ASSERT(isGLContextActive());
+	while (GL_NO_ERROR != (errorCode = glGetError())) {
 		const char *string = (const char *)gluErrorString(errorCode);
 		SOGLU_DEBUG_PRINT(situation << ": " << string);
 		//throw GLException(); //TODO proper throwing with exception
@@ -66,10 +85,10 @@ operator<<( std::ostream & stream, const GLViewSetup &setup )
 
 
 void
-checkForGLError( const std::string &situation  )
+checkForGLError(const std::string &situation)
 {
-	GLenum errorCode = glGetError();
-	if (errorCode != GL_NO_ERROR) {
+	//GLenum errorCode = glGetError();
+	while (GL_NO_ERROR != (errorCode = glGetError())) {
 		const char *string = (const char *)gluErrorString(errorCode);
 		throw GLException( TO_STRING( situation << " : " << string ) );
 	}

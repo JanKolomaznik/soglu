@@ -31,9 +31,6 @@
 //#include "soglu/OGLTools.hpp"
 //#include "soglu/GLTextureImage.hpp"
 
-#define SOGLU_D_PRINT(ARG)
-#define SOGLU_LOG(ARG)
-
 
 class RAII : private boost::noncopyable
 {
@@ -156,8 +153,8 @@ makeResourceGuardPtr( boost::function< TResource() > aAcquisition, boost::functi
 
 namespace soglu {
 
-class BoundingBox3D;
-class GLViewSetup;
+struct BoundingBox3D;
+struct GLViewSetup;
 struct GLTextureImage;
 class PerspectiveCamera;
 template < size_t Dim > struct GLTextureImageTyped;
@@ -292,19 +289,19 @@ namespace detail {
 	inline void
 	parameterSetter(CGparameter aParameter, const float *aValue, size_t aSize)
 	{
-		cgSetParameterValuefr(aParameter, aSize, aValue);
+		cgSetParameterValuefr(aParameter, int(aSize), aValue);
 	}
 
 	inline void
 	parameterSetter(CGparameter aParameter, const double *aValue, size_t aSize)
 	{
-		cgSetParameterValuedr(aParameter, aSize, aValue);
+		cgSetParameterValuedr(aParameter, int(aSize), aValue);
 	}
 
 	inline void
 	parameterSetter(CGparameter aParameter, const int *aValue, size_t aSize)
 	{
-		cgSetParameterValueir(aParameter, aSize, aValue);
+		cgSetParameterValueir(aParameter, int(aSize), aValue);
 	}
 
 	//-------------------------------------------------------------------------

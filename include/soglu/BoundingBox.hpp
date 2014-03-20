@@ -3,6 +3,7 @@
 #include <ostream>
 
 #include <string>
+#include <array>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_precision.hpp>
 //#include <glm/ext.hpp>
@@ -40,12 +41,12 @@ struct BoundingBox3D
 	}
 
 	glm::fvec3
-	getCenter()const
+	getCenter() const
 	{
 		return 0.5f * (vertices[0] + vertices[6]);
 	}
 
-	glm::fvec3	vertices[VertexCount];
+	std::array<glm::fvec3, VertexCount> vertices;
 };
 
 /*inline std::ostream &

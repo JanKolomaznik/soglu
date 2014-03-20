@@ -41,7 +41,7 @@ void activeTexture(TextureUnitId aTextureUnit);
 void bindTexture(TextureTarget aTextureTarget, TextureId aTexture);
 void bindTexture(TextureUnitId aTextureUnit, TextureTarget aTextureTarget, TextureId aTexture);
 
-template<typename TShaderTypeTag> GLSLShaderId createShader() { static_assert(false, "Unsupported GLSL shader type."); }
+template<typename TShaderTypeTag> GLSLShaderId createShader();// { static_assert(false, "Unsupported GLSL shader type."); }
 template<> GLSLShaderId createShader<VERTEX_SHADER_TAG>();
 template<> GLSLShaderId createShader<FRAGMENT_SHADER_TAG>();
 template<> GLSLShaderId createShader<GEOMETRY_SHADER_TAG>();
@@ -74,14 +74,14 @@ GLSLAttributeLocation getAttribLocation(GLSLProgramId aProgramId, const std::str
 
 #define SOGLU_DECLARE_SET_PROGRAM_UNIFORM_MATRIX(aMatrixDimension) \
 	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const glm::mat##aMatrixDimension &aValue)
-	
+
 #define SOGLU_DEFINE_SET_PROGRAM_UNIFORM_MATRIX(aMatrixDimension) \
 	SOGLU_DECLARE_SET_PROGRAM_UNIFORM_MATRIX(aMatrixDimension) \
 	{ GL_CHECKED_CALL(glProgramUniformMatrix##aMatrixDimension##fv(aProgramId, aUniformLocation, 1, GL_FALSE, glm::value_ptr(aValue))); }
-	
+
 #define SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(aVectorDimension, aSuffix) \
 	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const glm::detail::tvec##aVectorDimension<SOGLU_SUFFIX_TO_TYPE_##aSuffix> &aValue)
-	
+
 #define SOGLU_DEFINE_SET_PROGRAM_UNIFORM_VECTOR(aVectorDimension, aSuffix) \
 	SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(aVectorDimension, aSuffix) \
 	{ GL_CHECKED_CALL(glProgramUniform##aVectorDimension##aSuffix##v(aProgramId, aUniformLocation, 1, glm::value_ptr(aValue))); }

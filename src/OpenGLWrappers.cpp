@@ -18,19 +18,19 @@ int mapTextureTarget(TextureTarget aTextureTarget) {
 
 }  // anonymous namespace
 
-void 
+void
 activeTexture(TextureUnitId aTextureUnit)
 {
-	GL_CHECKED_CALL(glActiveTexture(aTextureUnit.value));
+	GL_CHECKED_CALL(glActiveTexture(GL_TEXTURE0 + aTextureUnit.value));
 }
 
-void 
+void
 bindTexture(TextureTarget aTextureTarget, TextureId aTexture)
 {
 	GL_CHECKED_CALL(glBindTexture(mapTextureTarget(aTextureTarget), aTexture.value));
 }
 
-void 
+void
 bindTexture(TextureUnitId aTextureUnit, TextureTarget aTextureTarget, TextureId aTexture)
 {
 	activeTexture(aTextureUnit);

@@ -7,6 +7,9 @@
 #include <glm/ext.hpp>
 #include <boost/format.hpp>
 
+#ifndef WIN32
+#include <GL/glx.h>
+#endif
 
 namespace soglu
 {

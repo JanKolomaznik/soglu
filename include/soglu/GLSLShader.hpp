@@ -27,6 +27,7 @@
 #include "soglu/GLTextureImage.hpp"
 #include "soglu/utils.hpp"
 #include "soglu/OpenGLWrappers.hpp"
+#include "soglu/GLViewSetup.hpp"
 
 namespace soglu {
 
@@ -284,6 +285,15 @@ public:
 		setUniformByName(aUniformName + ".realSize", aImage.getExtents().realMaximum - aImage.getExtents().realMinimum );
 		setUniformByName(aUniformName + ".realMinimum", aImage.getExtents().realMinimum );
 		setUniformByName(aUniformName + ".realMaximum", aImage.getExtents().realMaximum );
+	}
+	
+	void
+	setUniformByName(const std::string &aUniformName, const soglu::GLViewSetup &aViewSetup)
+	{
+		setUniformByName(aUniformName + ".modelViewProj", glm::fmat4x4(aViewSetup.modelViewProj) );
+		setUniformByName(aUniformName + ".modelMatrix", glm::fmat4x4(aViewSetup.model) );
+		setUniformByName(aUniformName + ".projMatrix", glm::fmat4x4(aViewSetup.projection) );
+		setUniformByName(aUniformName + ".viewMatrix", glm::fmat4x4(aViewSetup.view) );
 	}
 
 protected:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
 
 #include <soglu/BoundingBox.hpp>
 #include <soglu/GLWrappers.hpp>
@@ -11,12 +12,23 @@ namespace soglu {
 
 typedef int GLPrimitiveType;
 
+typedef std::tuple<
+	std::vector<glm::fvec3>,
+	std::vector<glm::fvec3>> VerticesWithTextureCoordinates;
+
 struct VertexIndexBuffers
 {
 	std::vector<glm::fvec3> vertices;
 	std::vector<unsigned int> indices;
 	unsigned int primitiveRestartIndex;
 };
+
+void
+drawVertexBuffer(
+	const std::vector<glm::fvec3> &aData,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	);
 
 void
 drawVertexIndexBuffers(

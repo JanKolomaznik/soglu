@@ -33,7 +33,8 @@ SET(${PROJECT_NAME}_SOURCES
 	"src/GLViewSetup.cpp"
 	"src/GLSLShader.cpp"  
 	"src/FrameBufferObject.cpp"
-	"src/OpenGLWrappers.cpp" 
+	"src/OpenGLWrappers.cpp"
+	"src/utils.cpp"  
 	)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})

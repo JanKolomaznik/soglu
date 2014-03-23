@@ -16,6 +16,41 @@
 namespace soglu {
 
 void
+drawVertexBuffer(
+	const std::vector<glm::fvec3> &aData,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	)
+{
+	GLuint vertexVBO;
+	GLuint vertexVAO;
+	glGenBuffers(1, &vertexVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.size(), (GLfloat*) aData.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenVertexArrays(1, &vertexVAO);
+    glBindVertexArray(vertexVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+    glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(aAttributeLocation);
+	std::vector<int> indices(4);
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+	indices[3] = 3;
+	glDrawArrays(aPrimitiveType, 0, aData.size());
+	glDrawElements(aPrimitiveType, int(indices.size()), GL_UNSIGNED_INT, indices.data());
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &vertexVBO);
+	glBindVertexArray(0);
+    glDeleteVertexArrays(1, &vertexVAO);
+	GL_CHECKED_CALL("drawVertexBuffer");
+}
+
+void
 drawVertexIndexBuffers(
 	const VertexIndexBuffers &aData,
 	GLPrimitiveType aPrimitiveType,

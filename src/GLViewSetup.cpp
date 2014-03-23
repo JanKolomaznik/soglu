@@ -14,7 +14,7 @@ getProjectionAndViewMatricesFromOrthoCamera( const OrthoCamera &camera, glm::dma
 				camera.topLeftCorner().y,
 				camera.near(),
 				camera.far()
-			   );
+				);
 	/*std::cout << "topLeftCorner : " << glm::to_string(camera.topLeftCorner()) << "\n";
 	std::cout << "bottomRightCorner : " << glm::to_string(camera.bottomRightCorner()) << "\n";
 	std::cout << "near : " << camera.near() << "\n";
@@ -23,7 +23,7 @@ getProjectionAndViewMatricesFromOrthoCamera( const OrthoCamera &camera, glm::dma
 		glm::dvec3(camera.eyePosition()),
 		glm::dvec3(camera.targetPosition()),
 		glm::dvec3(camera.upDirection())
-	);
+		);
 }
 
 void

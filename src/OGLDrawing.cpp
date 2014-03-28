@@ -24,38 +24,38 @@ drawVertexBuffer(
 {
 	GLuint vertexVBO;
 	GLuint vertexVAO;
-	glGenBuffers(1, &vertexVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.size(), (GLfloat*) aData.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GL_CHECKED_CALL(glGenBuffers(1, &vertexVBO));
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, vertexVBO));
+	GL_CHECKED_CALL(glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.size(), (GLfloat*) aData.data(), GL_STATIC_DRAW));
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-	glGenVertexArrays(1, &vertexVAO);
-    glBindVertexArray(vertexVAO);
+	GL_CHECKED_CALL(glGenVertexArrays(1, &vertexVAO));
+	GL_CHECKED_CALL(glBindVertexArray(vertexVAO));
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-    glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(aAttributeLocation);
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, vertexVBO));
+	GL_CHECKED_CALL(glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0));
+	GL_CHECKED_CALL(glEnableVertexAttribArray(aAttributeLocation));
 	std::vector<int> indices(4);
 	indices[0] = 0;
 	indices[1] = 1;
 	indices[2] = 2;
 	indices[3] = 3;
-	glDrawArrays(aPrimitiveType, 0, aData.size());
-	glDrawElements(aPrimitiveType, int(indices.size()), GL_UNSIGNED_INT, indices.data());
+	GL_CHECKED_CALL(glDrawArrays(aPrimitiveType, 0, aData.size()));
+	GL_CHECKED_CALL(glDrawElements(aPrimitiveType, int(indices.size()), GL_UNSIGNED_INT, indices.data()));
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteBuffers(1, &vertexVBO);
-	glBindVertexArray(0);
-    glDeleteVertexArrays(1, &vertexVAO);
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	GL_CHECKED_CALL(glDeleteBuffers(1, &vertexVBO));
+	GL_CHECKED_CALL(glBindVertexArray(0));
+	GL_CHECKED_CALL(glDeleteVertexArrays(1, &vertexVAO));
 	GL_CHECKED_CALL("drawVertexBuffer");
 }
 
-void
+	void
 drawVertexIndexBuffers(
-	const VertexIndexBuffers &aData,
-	GLPrimitiveType aPrimitiveType,
-	GLSLAttributeLocation aAttributeLocation
-	)
+		const VertexIndexBuffers &aData,
+		GLPrimitiveType aPrimitiveType,
+		GLSLAttributeLocation aAttributeLocation
+		)
 {
 	SOGLU_ASSERT(GL_VERSION_3_1);
 	SOGLU_ASSERT(glPrimitiveRestartIndex != NULL);
@@ -65,25 +65,24 @@ drawVertexIndexBuffers(
 
 	GLuint vertexVBO;
 	GLuint vertexVAO;
-	glGenBuffers(1, &vertexVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.vertices.size(), (GLfloat*) aData.vertices.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GL_CHECKED_CALL(glGenBuffers(1, &vertexVBO));
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, vertexVBO));
+	GL_CHECKED_CALL(glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.vertices.size(), (GLfloat*) aData.vertices.data(), GL_STATIC_DRAW));
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-	glGenVertexArrays(1, &vertexVAO);
-    glBindVertexArray(vertexVAO);
+	GL_CHECKED_CALL(glGenVertexArrays(1, &vertexVAO));
+	GL_CHECKED_CALL(glBindVertexArray(vertexVAO));
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-    glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(aAttributeLocation);
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, vertexVBO));
+	GL_CHECKED_CALL(glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0));
+	GL_CHECKED_CALL(glEnableVertexAttribArray(aAttributeLocation));
 
-	glDrawElements(aPrimitiveType, int(aData.indices.size()), GL_UNSIGNED_INT, aData.indices.data());
+	GL_CHECKED_CALL(glDrawElements(aPrimitiveType, int(aData.indices.size()), GL_UNSIGNED_INT, aData.indices.data()));
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteBuffers(1, &vertexVBO);
-	glBindVertexArray(0);
-    glDeleteVertexArrays(1, &vertexVAO);
-	GL_CHECKED_CALL("drawVertexIndexBuffers");
+	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	GL_CHECKED_CALL(glDeleteBuffers(1, &vertexVBO));
+	GL_CHECKED_CALL(glBindVertexArray(0));
+	GL_CHECKED_CALL(glDeleteVertexArrays(1, &vertexVAO));
 }
 
 void
@@ -130,11 +129,11 @@ VertexIndexBuffers
 generateBoundingBoxBuffers(const BoundingBox3D &aBBox)
 {
 	static const unsigned restartIndex = 10;
-	static const std::array<unsigned, 21> indices = { 
-		0, 1, 2, 3, 7, 6, 5, 4, 0, 
-		restartIndex, 0, 3, 
-		restartIndex, 1, 5, 
-		restartIndex, 2, 6, 
+	static const std::array<unsigned, 21> indices = {
+		0, 1, 2, 3, 7, 6, 5, 4, 0,
+		restartIndex, 0, 3,
+		restartIndex, 1, 5,
+		restartIndex, 2, 6,
 		restartIndex, 4, 7 };
 
 	VertexIndexBuffers result;
@@ -143,7 +142,7 @@ generateBoundingBoxBuffers(const BoundingBox3D &aBBox)
 	std::copy(std::begin(aBBox.vertices), std::end(aBBox.vertices), std::begin(result.vertices));
 	result.primitiveRestartIndex = restartIndex;
 	std::copy(std::begin(indices), std::end(indices), std::begin(result.indices));
-	
+
 	return result;
 }
 

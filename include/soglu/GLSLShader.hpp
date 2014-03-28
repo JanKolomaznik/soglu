@@ -28,6 +28,7 @@
 #include "soglu/utils.hpp"
 #include "soglu/OpenGLWrappers.hpp"
 #include "soglu/GLViewSetup.hpp"
+#include "soglu/Camera.hpp"
 
 namespace soglu {
 
@@ -82,16 +83,16 @@ struct ShaderListDeleter {
 
 }  // namespace detail
 
-void 
+void
 checkForShaderCompileError(GLSLShaderId aShaderId);
 
-void 
+void
 checkForShaderProgramLinkError(GLSLProgramId aProgramId);
 
-void 
+void
 checkForShaderProgramValidationError(GLSLProgramId aProgramId);
 
-std::string 
+std::string
 loadFile(boost::filesystem::path filename);
 
 template<typename TShaderTypeTag>
@@ -105,9 +106,9 @@ public:
 		: mShaderId(0)
 	{
 		mShaderId = gl::createShader<TShaderTypeTag>();
-       
+
 		gl::shaderSource(mShaderId, aSource);
-        gl::compileShader(mShaderId);
+		gl::compileShader(mShaderId);
 
 		checkForShaderCompileError(mShaderId);
 	}
@@ -118,8 +119,8 @@ public:
 		aShader.mShaderId = 0;
 	}
 
-	virtual 
-	~GLSLShader() 
+	virtual
+	~GLSLShader()
 	{
 		if (mShaderId) {
 			try {
@@ -131,7 +132,7 @@ public:
 		}
 	}
 
-	GLSLShaderId 
+	GLSLShaderId
 	id() const
 	{
 		return mShaderId;
@@ -147,7 +148,7 @@ typedef GLSLShader<GEOMETRY_SHADER_TAG> GLSLGeometryShader;
 
 class GLSLProgram {
 public:
-	GLSLProgram(bool aInit = false) 
+	GLSLProgram(bool aInit = false)
 		: mProgramId(0)
 	{
 		if (aInit) {
@@ -162,7 +163,7 @@ public:
 		aProgram.mProgramId = 0;
 	}
 
-	void 
+	void
 	initialize()
 	{
 		mProgramId = gl::createProgram();
@@ -180,8 +181,8 @@ public:
 		}
 	}
 
-	virtual 
-	~GLSLProgram() 
+	virtual
+	~GLSLProgram()
 	{
 		finalize();
 	}
@@ -196,21 +197,21 @@ public:
 	}
 
 	template<typename TShader>
-	void 
+	void
 	attachShader(std::shared_ptr<TShader> aShader)
 	{
 		gl::attachShader(mProgramId, aShader->id());
 		boost::fusion::get<detail::GLSLShaderTypeTraits<typename TShader::Tag>::cOrder>(mAttachedShaders).push_back(aShader);
 	}
 
-	void 
+	void
 	link()
 	{
 		gl::linkProgram(mProgramId);
 		checkForShaderProgramLinkError(mProgramId);
 	}
-	
-	void 
+
+	void
 	validate()
 	{
 		gl::validateProgram(mProgramId);
@@ -218,7 +219,7 @@ public:
 	}
 
 	template<typename TCallable>
-	void 
+	void
 	use(TCallable aCallable)
 	{
 		bind();
@@ -226,31 +227,31 @@ public:
 		unbind();
 	}
 
-	void 
+	void
 	bind()
 	{
 		gl::useProgram(mProgramId);
 	}
 
-	void 
+	void
 	unbind()
 	{
 		gl::useProgram(0);
 	}
 
-	GLSLProgramId 
+	GLSLProgramId
 	id() const
 	{
 		return mProgramId;
 	}
 
-	GLSLUniformLocation 
+	GLSLUniformLocation
 	getUniformLocation(const std::string &aUniformName)
 	{
 		return gl::getUniformLocation(mProgramId, aUniformName);
 	}
 
-	GLSLAttributeLocation 
+	GLSLAttributeLocation
 	getAttributeLocation(const std::string &aAttributeName)
 	{
 		return gl::getAttribLocation(mProgramId, aAttributeName);
@@ -286,7 +287,7 @@ public:
 		setUniformByName(aUniformName + ".realMinimum", aImage.getExtents().realMinimum );
 		setUniformByName(aUniformName + ".realMaximum", aImage.getExtents().realMaximum );
 	}
-	
+
 	void
 	setUniformByName(const std::string &aUniformName, const soglu::GLViewSetup &aViewSetup)
 	{
@@ -294,6 +295,14 @@ public:
 		setUniformByName(aUniformName + ".modelMatrix", glm::fmat4x4(aViewSetup.model) );
 		setUniformByName(aUniformName + ".projMatrix", glm::fmat4x4(aViewSetup.projection) );
 		setUniformByName(aUniformName + ".viewMatrix", glm::fmat4x4(aViewSetup.view) );
+	}
+
+	void
+	setUniformByName(const std::string &aUniformName, const PerspectiveCamera &aCamera)
+	{
+		setUniformByName(aUniformName + ".eyePosition", aCamera.eyePosition());
+		setUniformByName(aUniformName + ".viewDirection", aCamera.targetDirection());
+		setUniformByName(aUniformName + ".upDirection", aCamera.upDirection());
 	}
 
 protected:

@@ -119,6 +119,7 @@ GLSLUniformLocation getUniformLocation(GLSLProgramId aProgramId, const std::stri
 	GLint id = -1;
 	GL_CHECKED_CALL(id = glGetUniformLocation(aProgramId, aName.c_str()));
 	if (id == -1) {
+		SOGLU_DEBUG_PRINT("Uniform location '" << aName << "' not found (program [" << aProgramId << "])!");
 		SOGLU_THROW(EGLSLInvalidUniformName());
 	}
  	return id;
@@ -129,6 +130,7 @@ GLSLAttributeLocation getAttribLocation(GLSLProgramId aProgramId, const std::str
 	GLint id = -1;
 	GL_CHECKED_CALL(id = glGetAttribLocation(aProgramId, aName.c_str()));
 	if (id == -1) {
+		SOGLU_DEBUG_PRINT("Attribute location '" << aName << "' not found (program [" << aProgramId << "])!");
 		SOGLU_THROW(EGLSLInvalidUniformName());
 	}
  	return id;

@@ -26,7 +26,7 @@ getShaderProgramInfoLog(GLSLProgramId aProgramId)
 	return std::string(errorMessage.data());
 }
 
-void 
+void
 checkForShaderCompileError(GLSLShaderId aShaderId)
 {
 	GLint compileStatus = GL_TRUE;
@@ -38,7 +38,7 @@ checkForShaderCompileError(GLSLShaderId aShaderId)
 	SOGLU_THROW(EGLSLShaderCompileError());
 }
 
-void 
+void
 checkForShaderProgramLinkError(GLSLProgramId aProgramId)
 {
 	GLint compileStatus = GL_TRUE;
@@ -50,7 +50,7 @@ checkForShaderProgramLinkError(GLSLProgramId aProgramId)
 	SOGLU_THROW(EGLSLProgramLinkError());
 }
 
-void 
+void
 checkForShaderProgramValidationError(GLSLProgramId aProgramId)
 {
 	GLint compileStatus = GL_TRUE;
@@ -62,30 +62,30 @@ checkForShaderProgramValidationError(GLSLProgramId aProgramId)
 	SOGLU_THROW(EGLSLProgramValidationError());
 }
 
-std::string loadFile(boost::filesystem::path filename) 
+std::string loadFile(boost::filesystem::path filename)
 {
-    std::ifstream file;
-    file.exceptions(std::ifstream::badbit);
-    file.open(filename.string());
-	
+	std::ifstream file;
+	file.exceptions(std::ifstream::badbit);
+	file.open(filename.string());
+
 	std::string output;
-	file.seekg(0, std::ios::end);   
+	file.seekg(0, std::ios::end);
 	output.reserve(file.tellg());
 	file.seekg(0, std::ios::beg);
- 
+
 	output.assign(
 		(std::istreambuf_iterator<char>(file)),
 		std::istreambuf_iterator<char>());
-    return output;
+	return output;
 }
 
 GLSLProgram createGLSLProgramFromVertexAndFragmentShader(const boost::filesystem::path &aVertexShader, const boost::filesystem::path &aFragmentShader)
 {
-	std::string vertex_shader = loadFile(aVertexShader);
-	std::string fragment_shader = loadFile(aFragmentShader);
+	std::string vertexShader = loadFile(aVertexShader);
+	std::string fragmentShader = loadFile(aFragmentShader);
 	GLSLProgram program(true);
-	program.attachShader(std::make_shared<GLSLFragmentShader>(fragment_shader));
-	program.attachShader(std::make_shared<GLSLVertexShader>(vertex_shader));
+	program.attachShader(std::make_shared<GLSLVertexShader>(vertexShader));
+	program.attachShader(std::make_shared<GLSLFragmentShader>(fragmentShader));
 	program.link();
 	program.validate();
 	std::cout << "Program info " << getShaderProgramInfoLog(program.id()) << std::endl;

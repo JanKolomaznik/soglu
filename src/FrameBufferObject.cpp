@@ -12,7 +12,7 @@ FrameBufferObject::FrameBufferObject(): mInitialized( false ), mBinded( false )
 
 FrameBufferObject::~FrameBufferObject()
 {
-	Finalize();
+	finalize();
 }
 
 GLuint
@@ -23,13 +23,13 @@ FrameBufferObject::GetColorBuffer()
 }
 
 void
-FrameBufferObject::Initialize( unsigned aWidth, unsigned aHeight )
+FrameBufferObject::initialize(int aWidth, int aHeight)
 {
-	Initialize( aWidth, aHeight, GL_RGBA32F );
+	initialize(aWidth, aHeight, GL_RGBA32F);
 }
 
 void
-FrameBufferObject::Initialize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat )
+FrameBufferObject::initialize(int aWidth, int aHeight, GLint aInternalFormat)
 {
 	checkForGLError("Before framebuffer init.");
 	SOGLU_ASSERT(isGLContextActive());
@@ -38,11 +38,11 @@ FrameBufferObject::Initialize( unsigned aWidth, unsigned aHeight, GLint aInterna
 	GL_CHECKED_CALL( glGenTextures( 1, &mColorTexture ) );
 
 	mInitialized = true;
-	Resize( aWidth, aHeight, aInternalFormat );
+	resize( aWidth, aHeight, aInternalFormat );
 }
 
 void
-FrameBufferObject::Finalize()
+FrameBufferObject::finalize()
 {
 	if ( mInitialized ) {
 		SOGLU_ASSERT(isGLContextActive());
@@ -54,7 +54,7 @@ FrameBufferObject::Finalize()
 }
 
 void
-FrameBufferObject::Render()
+FrameBufferObject::render()
 {
 	SOGLU_ASSERT(isGLContextActive());
 	soglu::GLPushAtribs pushAttribs;
@@ -77,7 +77,7 @@ FrameBufferObject::Render()
 }
 
 void
-FrameBufferObject::Bind()
+FrameBufferObject::bind()
 {
 	SOGLU_ASSERT( mInitialized );
 	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, mFrameBufferObject ) );
@@ -85,7 +85,7 @@ FrameBufferObject::Bind()
 }
 
 void
-FrameBufferObject::Unbind()
+FrameBufferObject::unbind()
 {
 	SOGLU_ASSERT( mInitialized );
 	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, 0 ) );
@@ -93,7 +93,7 @@ FrameBufferObject::Unbind()
 }
 
 void
-FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat)
+FrameBufferObject::resize(int aWidth, int aHeight, GLint aInternalFormat)
 {
 	SOGLU_ASSERT(isGLContextActive());
 	SOGLU_ASSERT ( mInitialized );
@@ -145,9 +145,9 @@ FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFor
 }
 
 void
-FrameBufferObject::Resize( unsigned aWidth, unsigned aHeight)
+FrameBufferObject::resize(int aWidth, int aHeight)
 {
-	Resize(aWidth, aHeight, GL_RGBA32F);
+	resize(aWidth, aHeight, GL_RGBA32F);
 }
 
 } /*namespace soglu*/

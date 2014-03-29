@@ -27,7 +27,56 @@ typedef GLValueWrapper<unsigned int, TextureTag, 0> TextureId;
 typedef GLValueWrapper<unsigned int, TextureUnitTag, 0> TextureUnitId;
 typedef GLValueWrapper<unsigned int, SamplerTag, 0> SamplerId;
 
+template<typename TBindable>
+struct GLBinder
+{
+	GLBinder(TBindable &aBindable)
+		: mBindable(aBindable)
+		, mIsBinded(false)
+	{
+		bind();		
+	}
 
+	GLBinder(GLBinder &&aBinder)
+		: mBindable(aBinder.aBindable)
+		, mIsBinded(aBinder.mIsBinded)
+	{
+		aBinder.mIsBinded = false;
+	}
+
+	~GLBinder()
+	{
+		if (mIsBinded) {
+			unbind();
+		}
+	}
+
+	void
+	bind()
+	{
+		SOGLU_ASSERT(!mIsBinded);
+		SOGLU_ASSERT(isGLContextActive());
+		mBindable.bind();
+	}
+	
+	void
+	unbind()
+	{
+		SOGLU_ASSERT(mIsBinded);
+		SOGLU_ASSERT(isGLContextActive());
+		mBindable.unbind();
+	}
+
+	TBindable &mBindable;
+	bool mIsBinded;
+};
+
+template<typename TBindable>
+GLBinder<TBindable>
+getBinder(TBindable &aBindable)
+{
+	return GLBinder<TBindable>(aBindable);
+}
 
 class Sampler : public SamplerId
 {

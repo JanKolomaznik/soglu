@@ -22,31 +22,31 @@ public:
 	GetColorBuffer();
 
 	void
-	Initialize( unsigned aWidth, unsigned aHeight );
+	initialize(int aWidth, int aHeight);
 
 	void
-	Initialize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat );
+	initialize(int aWidth, int aHeight, GLint aInternalFormat);
 
 	void
-	Finalize();
+	finalize();
 
 	void
-	Render();
+	render();
 
 	void
-	Bind();
+	bind();
 
 	void
-	Unbind();
+	unbind();
 
 	void
-	Resize( unsigned aWidth, unsigned aHeight, GLint aInternalFormat );
+	resize(int aWidth, int aHeight, GLint aInternalFormat );
 
 	void
-	Resize( unsigned aWidth, unsigned aHeight);
+	resize(int aWidth, int aHeight);
 
-	glm::uvec2
-	GetSize()const
+	glm::ivec2
+	size()const
 	{ return mSize; }
 
 	bool
@@ -58,7 +58,7 @@ protected:
 		mColorTexture;
 	bool mInitialized;
 	bool mBinded;
-	glm::uvec2 mSize;
+	glm::ivec2 mSize;
 };
 
 } /*namespace soglu*/

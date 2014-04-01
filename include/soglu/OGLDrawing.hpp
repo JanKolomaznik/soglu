@@ -38,6 +38,9 @@ drawVertexIndexBuffers(
 	);
 
 VertexIndexBuffers
+generateBoundingBoxBuffersWireframe(const BoundingBox3D &aBBox);
+
+VertexIndexBuffers
 generateBoundingBoxBuffers(const BoundingBox3D &aBBox);
 
 void

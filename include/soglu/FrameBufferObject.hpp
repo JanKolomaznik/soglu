@@ -9,14 +9,16 @@
 #include <glm/gtc/type_precision.hpp>
 #include <glm/ext.hpp>
 
+#include <soglu/utils.hpp>
+
 namespace soglu {
 
-class FrameBufferObject
+class Framebuffer
 {
 public:
-	FrameBufferObject();
+	Framebuffer();
 
-	~FrameBufferObject();
+	~Framebuffer();
 
 	GLuint
 	GetColorBuffer();
@@ -53,9 +55,12 @@ public:
 	isInitialized() const
 	{ return mInitialized; }
 protected:
-	GLuint	mFrameBufferObject,
+	FramebufferObject mFrameBufferObject;
+	RenderbufferObject mDepthBuffer;
+	TextureObject mColorTexture;
+	/*GLuint	mFrameBufferObject,
 		mDepthBuffer,
-		mColorTexture;
+		mColorTexture;*/
 	bool mInitialized;
 	bool mBinded;
 	glm::ivec2 mSize;

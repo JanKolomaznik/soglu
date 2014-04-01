@@ -7,54 +7,60 @@
 
 namespace soglu {
 
-FrameBufferObject::FrameBufferObject(): mInitialized( false ), mBinded( false )
+Framebuffer::Framebuffer(): mInitialized( false ), mBinded( false )
 {}
 
-FrameBufferObject::~FrameBufferObject()
+Framebuffer::~Framebuffer()
 {
 	finalize();
 }
 
 GLuint
-FrameBufferObject::GetColorBuffer()
+Framebuffer::GetColorBuffer()
 {
 	SOGLU_ASSERT( mInitialized );
 	return mColorTexture;
 }
 
 void
-FrameBufferObject::initialize(int aWidth, int aHeight)
+Framebuffer::initialize(int aWidth, int aHeight)
 {
 	initialize(aWidth, aHeight, GL_RGBA32F);
 }
 
 void
-FrameBufferObject::initialize(int aWidth, int aHeight, GLint aInternalFormat)
+Framebuffer::initialize(int aWidth, int aHeight, GLint aInternalFormat)
 {
 	checkForGLError("Before framebuffer init.");
 	SOGLU_ASSERT(isGLContextActive());
-	GL_CHECKED_CALL( glGenFramebuffers( 1, &mFrameBufferObject ) );
+	mFrameBufferObject.initialize();
+	mDepthBuffer.initialize();
+	mColorTexture.initialize();
+	/*GL_CHECKED_CALL( glGenFramebuffers( 1, &mFrameBufferObject ) );
 	GL_CHECKED_CALL( glGenRenderbuffers( 1, &mDepthBuffer ) );
-	GL_CHECKED_CALL( glGenTextures( 1, &mColorTexture ) );
+	GL_CHECKED_CALL( glGenTextures( 1, &mColorTexture ) );*/
 
 	mInitialized = true;
 	resize( aWidth, aHeight, aInternalFormat );
 }
 
 void
-FrameBufferObject::finalize()
+Framebuffer::finalize()
 {
 	if ( mInitialized ) {
 		SOGLU_ASSERT(isGLContextActive());
-		GL_CHECKED_CALL( glDeleteFramebuffers( 1, &mFrameBufferObject ) );
+		mFrameBufferObject.finalize();
+		mDepthBuffer.finalize();
+		mColorTexture.finalize();
+		/*GL_CHECKED_CALL( glDeleteFramebuffers( 1, &mFrameBufferObject ) );
 		GL_CHECKED_CALL( glDeleteTextures( 1, &mColorTexture ) );
-		GL_CHECKED_CALL( glDeleteRenderbuffers( 1, &mDepthBuffer ) );
+		GL_CHECKED_CALL( glDeleteRenderbuffers( 1, &mDepthBuffer ) );*/
 	}
 	mInitialized = false;
 }
 
 void
-FrameBufferObject::render()
+Framebuffer::render()
 {
 	SOGLU_ASSERT(isGLContextActive());
 	soglu::GLPushAtribs pushAttribs;
@@ -62,7 +68,8 @@ FrameBufferObject::render()
 	GL_CHECKED_CALL( glLoadIdentity() );
 	GL_CHECKED_CALL( glMatrixMode( GL_MODELVIEW ) );
 	GL_CHECKED_CALL( glLoadIdentity() );
-	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, mColorTexture ) );
+	gl::activeTexture(TextureUnitId(0));
+	GL_CHECKED_CALL( glBindTexture(GL_TEXTURE_2D, mColorTexture.value));
 	GL_CHECKED_CALL( glDisable( GL_TEXTURE_1D ) );
 	GL_CHECKED_CALL( glDisable( GL_TEXTURE_3D ) );
 	GL_CHECKED_CALL( glEnable( GL_TEXTURE_2D ) );
@@ -77,75 +84,83 @@ FrameBufferObject::render()
 }
 
 void
-FrameBufferObject::bind()
+Framebuffer::bind()
 {
-	SOGLU_ASSERT( mInitialized );
-	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, mFrameBufferObject ) );
+	SOGLU_ASSERT(mInitialized);
+	mFrameBufferObject.bind();
 	mBinded = true;
 }
 
 void
-FrameBufferObject::unbind()
+Framebuffer::unbind()
 {
-	SOGLU_ASSERT( mInitialized );
-	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, 0 ) );
+	SOGLU_ASSERT(mInitialized);
+	SOGLU_ASSERT(mBinded);
+	mFrameBufferObject.unbind();
 	mBinded = false;
 }
 
 void
-FrameBufferObject::resize(int aWidth, int aHeight, GLint aInternalFormat)
+Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 {
 	SOGLU_ASSERT(isGLContextActive());
 	SOGLU_ASSERT ( mInitialized );
-	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, mFrameBufferObject ) );
+	SOGLU_DEBUG_PRINT("BEFORE BINDING FRAMEBUFFER OBJECT");
+	auto framebufferBinder = getBinder(mFrameBufferObject);
+	//GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, mFrameBufferObject ) );
 
-	GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, mColorTexture ) );
-	GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, mDepthBuffer ) );
+	{
+		auto renderbufferBinder = getBinder(mDepthBuffer);
+		//GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, mDepthBuffer ) );
+		GL_CHECKED_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, aWidth, aHeight));
+		//GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, 0 ) );
+	}
 
-	GL_CHECKED_CALL( glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH_COMPONENT, aWidth, aHeight ) );
-	GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, 0 ) );
-
-	//GL_CHECKED_CALL(glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE ));
-	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP ));
-	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP ));
-	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST ));
-	GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ));
-	GL_CHECKED_CALL( glTexImage2D(
-				GL_TEXTURE_2D,
-				0,
-				aInternalFormat,
-				aWidth,
-				aHeight,
-				0,
-				GL_RGBA,
-				GL_FLOAT,
-				NULL
-				) );
-	GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, 0 ) );
+	{
+		auto textureBinder = getBinder(mColorTexture, GL_TEXTURE_2D);
+		//GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, mColorTexture ) );
+		//GL_CHECKED_CALL(glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE ));
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP ));
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP ));
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST ));
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ));
+		GL_CHECKED_CALL(glTexImage2D(
+					GL_TEXTURE_2D,
+					0,
+					aInternalFormat,
+					aWidth,
+					aHeight,
+					0,
+					GL_RGBA,
+					GL_FLOAT,
+					nullptr
+					));
+		//GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, 0 ) );
+	}
 
 	GL_CHECKED_CALL( glFramebufferRenderbuffer(
 				GL_FRAMEBUFFER,
 				GL_DEPTH_ATTACHMENT,
 				GL_RENDERBUFFER,
-				mDepthBuffer
+				mDepthBuffer.value
 				) );
 
 	GL_CHECKED_CALL( glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
 				GL_TEXTURE_2D,
-				mColorTexture,
+				mColorTexture.value,
 				0
 				) );
 
-	GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, 0 ) );
-
+	//GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, 0 ) );
+	SOGLU_DEBUG_PRINT("BEFORE UNBINDING FRAMEBUFFER OBJECT");
 	mSize.x = aWidth;
 	mSize.y = aHeight;
 }
 
 void
-FrameBufferObject::resize(int aWidth, int aHeight)
+Framebuffer::resize(int aWidth, int aHeight)
 {
 	resize(aWidth, aHeight, GL_RGBA32F);
 }

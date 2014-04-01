@@ -15,6 +15,7 @@
 
 namespace soglu {
 
+
 void
 drawVertexBuffer(
 	const std::vector<glm::fvec3> &aData,
@@ -22,6 +23,7 @@ drawVertexBuffer(
 	GLSLAttributeLocation aAttributeLocation
 	)
 {
+	//TODO - remove indices
 	GLuint vertexVBO;
 	GLuint vertexVAO;
 	GL_CHECKED_CALL(glGenBuffers(1, &vertexVBO));
@@ -47,10 +49,9 @@ drawVertexBuffer(
 	GL_CHECKED_CALL(glDeleteBuffers(1, &vertexVBO));
 	GL_CHECKED_CALL(glBindVertexArray(0));
 	GL_CHECKED_CALL(glDeleteVertexArrays(1, &vertexVAO));
-	GL_CHECKED_CALL("drawVertexBuffer");
 }
 
-	void
+void
 drawVertexIndexBuffers(
 		const VertexIndexBuffers &aData,
 		GLPrimitiveType aPrimitiveType,
@@ -63,26 +64,37 @@ drawVertexIndexBuffers(
 	GL_CHECKED_CALL(glEnable(GL_PRIMITIVE_RESTART));
 	GL_CHECKED_CALL(glPrimitiveRestartIndex(aData.primitiveRestartIndex));
 
-	GLuint vertexVBO;
 	GLuint vertexVAO;
-	GL_CHECKED_CALL(glGenBuffers(1, &vertexVBO));
-	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, vertexVBO));
-	GL_CHECKED_CALL(glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.vertices.size(), (GLfloat*) aData.vertices.data(), GL_STATIC_DRAW));
-	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-	GL_CHECKED_CALL(glGenVertexArrays(1, &vertexVAO));
-	GL_CHECKED_CALL(glBindVertexArray(vertexVAO));
+	BufferObject vertices;
+	vertices.initialize();
 
-	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, vertexVBO));
-	GL_CHECKED_CALL(glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0));
-	GL_CHECKED_CALL(glEnableVertexAttribArray(aAttributeLocation));
+	BufferObject indices;
+	indices.initialize();
 
-	GL_CHECKED_CALL(glDrawElements(aPrimitiveType, int(aData.indices.size()), GL_UNSIGNED_INT, aData.indices.data()));
+	{
+		auto bufferBinder = getBinder(vertices, GL_ARRAY_BUFFER);
+		GL_CHECKED_CALL(glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat) * aData.vertices.size(), (GLfloat*) aData.vertices.data(), GL_STATIC_DRAW));
+	}
 
-	GL_CHECKED_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
-	GL_CHECKED_CALL(glDeleteBuffers(1, &vertexVBO));
-	GL_CHECKED_CALL(glBindVertexArray(0));
-	GL_CHECKED_CALL(glDeleteVertexArrays(1, &vertexVAO));
+	{
+		auto bufferBinder = getBinder(indices, GL_ELEMENT_ARRAY_BUFFER);
+		GL_CHECKED_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * aData.indices.size(), (GLuint*) aData.indices.data(), GL_STATIC_DRAW));
+	}
+
+	VertexArrayObject vertexArray;
+	vertexArray.initialize();
+	auto arrayBinder = getBinder(vertexArray);
+	{
+		auto vertexBufferBinder = getBinder(vertices, GL_ARRAY_BUFFER);
+		GL_CHECKED_CALL(glVertexAttribPointer(aAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0));
+		GL_CHECKED_CALL(glEnableVertexAttribArray(aAttributeLocation));
+
+		auto indexBufferBinder = getBinder(indices, GL_ELEMENT_ARRAY_BUFFER);
+
+		GL_CHECKED_CALL(glDrawElements(aPrimitiveType, int(aData.indices.size()), GL_UNSIGNED_INT, 0));
+
+	}
 }
 
 void
@@ -126,7 +138,7 @@ drawRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3)
 }
 
 VertexIndexBuffers
-generateBoundingBoxBuffers(const BoundingBox3D &aBBox)
+generateBoundingBoxBuffersWireframe(const BoundingBox3D &aBBox)
 {
 	static const unsigned restartIndex = 10;
 	static const std::array<unsigned, 21> indices = {
@@ -139,6 +151,25 @@ generateBoundingBoxBuffers(const BoundingBox3D &aBBox)
 	VertexIndexBuffers result;
 	result.vertices.resize(8);
 	result.indices.resize(21);
+	std::copy(std::begin(aBBox.vertices), std::end(aBBox.vertices), std::begin(result.vertices));
+	result.primitiveRestartIndex = restartIndex;
+	std::copy(std::begin(indices), std::end(indices), std::begin(result.indices));
+
+	return result;
+}
+
+VertexIndexBuffers
+generateBoundingBoxBuffers(const BoundingBox3D &aBBox)
+{
+	static const unsigned restartIndex = 10;
+	static const std::array<unsigned, 20> indices = {
+		0, 4, 3, 7, 2, 6, 1, 5, 0, 4,
+		restartIndex, 4, 5, 7, 6,
+		restartIndex, 0, 3, 2, 1};
+
+	VertexIndexBuffers result;
+	result.vertices.resize(8);
+	result.indices.resize(20);
 	std::copy(std::begin(aBBox.vertices), std::end(aBBox.vertices), std::begin(result.vertices));
 	result.primitiveRestartIndex = restartIndex;
 	std::copy(std::begin(indices), std::end(indices), std::begin(result.indices));

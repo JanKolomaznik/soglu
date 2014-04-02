@@ -36,10 +36,6 @@ Framebuffer::initialize(int aWidth, int aHeight, GLint aInternalFormat)
 	mFrameBufferObject.initialize();
 	mDepthBuffer.initialize();
 	mColorTexture.initialize();
-	/*GL_CHECKED_CALL( glGenFramebuffers( 1, &mFrameBufferObject ) );
-	GL_CHECKED_CALL( glGenRenderbuffers( 1, &mDepthBuffer ) );
-	GL_CHECKED_CALL( glGenTextures( 1, &mColorTexture ) );*/
-
 	mInitialized = true;
 	resize( aWidth, aHeight, aInternalFormat );
 }
@@ -52,9 +48,6 @@ Framebuffer::finalize()
 		mFrameBufferObject.finalize();
 		mDepthBuffer.finalize();
 		mColorTexture.finalize();
-		/*GL_CHECKED_CALL( glDeleteFramebuffers( 1, &mFrameBufferObject ) );
-		GL_CHECKED_CALL( glDeleteTextures( 1, &mColorTexture ) );
-		GL_CHECKED_CALL( glDeleteRenderbuffers( 1, &mDepthBuffer ) );*/
 	}
 	mInitialized = false;
 }
@@ -64,6 +57,7 @@ Framebuffer::render()
 {
 	SOGLU_ASSERT(isGLContextActive());
 	soglu::GLPushAtribs pushAttribs;
+	GL_CHECKED_CALL(glDisable(GL_BLEND));
 	GL_CHECKED_CALL( glMatrixMode( GL_PROJECTION ) );
 	GL_CHECKED_CALL( glLoadIdentity() );
 	GL_CHECKED_CALL( glMatrixMode( GL_MODELVIEW ) );
@@ -107,19 +101,14 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 	SOGLU_ASSERT ( mInitialized );
 	SOGLU_DEBUG_PRINT("BEFORE BINDING FRAMEBUFFER OBJECT");
 	auto framebufferBinder = getBinder(mFrameBufferObject);
-	//GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, mFrameBufferObject ) );
 
 	{
 		auto renderbufferBinder = getBinder(mDepthBuffer);
-		//GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, mDepthBuffer ) );
 		GL_CHECKED_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, aWidth, aHeight));
-		//GL_CHECKED_CALL( glBindRenderbuffer( GL_RENDERBUFFER, 0 ) );
 	}
 
 	{
 		auto textureBinder = getBinder(mColorTexture, GL_TEXTURE_2D);
-		//GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, mColorTexture ) );
-		//GL_CHECKED_CALL(glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE ));
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP ));
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP ));
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST ));
@@ -135,7 +124,6 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 					GL_FLOAT,
 					nullptr
 					));
-		//GL_CHECKED_CALL( glBindTexture ( GL_TEXTURE_2D, 0 ) );
 	}
 
 	GL_CHECKED_CALL( glFramebufferRenderbuffer(
@@ -153,8 +141,6 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 				0
 				) );
 
-	//GL_CHECKED_CALL( glBindFramebuffer( GL_FRAMEBUFFER, 0 ) );
-	SOGLU_DEBUG_PRINT("BEFORE UNBINDING FRAMEBUFFER OBJECT");
 	mSize.x = aWidth;
 	mSize.y = aHeight;
 }

@@ -35,16 +35,16 @@ TextureObject::unbind(uint32_t aTextureTarget)
 }
 
 void
-FramebufferObject::bind()
+FramebufferObject::bind(uint32_t aFramebufferType)
 {
 	SOGLU_ASSERT(*this);
-	GL_CHECKED_CALL(glBindFramebuffer(GL_FRAMEBUFFER, value));
+	GL_CHECKED_CALL(glBindFramebuffer(aFramebufferType, value));
 }
 
 void
-FramebufferObject::unbind()
+FramebufferObject::unbind(uint32_t aFramebufferType)
 {
-	GL_CHECKED_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	GL_CHECKED_CALL(glBindFramebuffer(aFramebufferType, 0));
 }
 
 void

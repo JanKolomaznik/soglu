@@ -84,10 +84,10 @@ struct FramebufferObject
 	finalize();
 
 	void
-	bind();
+	bind(uint32_t aFramebufferType);
 
 	void
-	unbind();
+	unbind(uint32_t aFramebufferType);
 };
 
 struct RenderbufferObject

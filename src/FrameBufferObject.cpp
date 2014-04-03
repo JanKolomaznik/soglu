@@ -56,7 +56,11 @@ void
 Framebuffer::render()
 {
 	SOGLU_ASSERT(isGLContextActive());
-	soglu::GLPushAtribs pushAttribs;
+	auto frameBufferBinder = getBinder(mFrameBufferObject, GL_READ_FRAMEBUFFER);
+	GL_CHECKED_CALL(glReadBuffer(GL_COLOR_ATTACHMENT0));
+	GL_CHECKED_CALL(glBlitFramebuffer(0, 0, mSize.x, mSize.y, 0, 0, mSize.x, mSize.y, GL_COLOR_BUFFER_BIT, GL_LINEAR));
+
+	/*soglu::GLPushAtribs pushAttribs;
 	GL_CHECKED_CALL(glDisable(GL_BLEND));
 	GL_CHECKED_CALL( glMatrixMode( GL_PROJECTION ) );
 	GL_CHECKED_CALL( glLoadIdentity() );
@@ -74,14 +78,14 @@ Framebuffer::render()
 		glm::fvec2( 0.0f, 0.0f ),
 		glm::fvec2( (float)mSize[0], (float)mSize[1] )
 		);
-	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
+	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );*/
 }
 
 void
 Framebuffer::bind()
 {
 	SOGLU_ASSERT(mInitialized);
-	mFrameBufferObject.bind();
+	mFrameBufferObject.bind(GL_FRAMEBUFFER);
 	mBinded = true;
 }
 
@@ -90,7 +94,7 @@ Framebuffer::unbind()
 {
 	SOGLU_ASSERT(mInitialized);
 	SOGLU_ASSERT(mBinded);
-	mFrameBufferObject.unbind();
+	mFrameBufferObject.unbind(GL_FRAMEBUFFER);
 	mBinded = false;
 }
 
@@ -100,7 +104,7 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 	SOGLU_ASSERT(isGLContextActive());
 	SOGLU_ASSERT ( mInitialized );
 	SOGLU_DEBUG_PRINT("BEFORE BINDING FRAMEBUFFER OBJECT");
-	auto framebufferBinder = getBinder(mFrameBufferObject);
+	auto framebufferBinder = getBinder(mFrameBufferObject, GL_FRAMEBUFFER);
 
 	{
 		auto renderbufferBinder = getBinder(mDepthBuffer);

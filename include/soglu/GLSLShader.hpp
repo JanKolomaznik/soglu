@@ -214,6 +214,7 @@ public:
 	void
 	validate()
 	{
+		SOGLU_DEBUG_PRINT("Validating shader program " << mProgramId);
 		gl::validateProgram(mProgramId);
 		checkForShaderProgramValidationError(mProgramId);
 	}

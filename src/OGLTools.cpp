@@ -124,24 +124,29 @@ getImageBufferFromTexture( uint32 &aWidth, uint32 &aHeight, boost::shared_array<
 void
 initOpenGL()
 {
+	checkForGLError("Error before 'initOpenGL'");
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
-		throw "EInitError";//( "GLEW" );
+		SOGLU_THROW(GLException("Glew init error"));
 	}
+	checkForGLError("Error after 'glewInit'");
 
 	std::cout << boost::format("Status: Using GLEW %1%\n") % glewGetString(GLEW_VERSION);
 	std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
-	std::cout << "\tGLEW_VERSION_1_1 " << ((GLEW_VERSION_1_1) ? std::string("OK") : std::string("FAIL")) << std::endl;
-	std::cout << "\tGLEW_VERSION_1_2 " << ((GLEW_VERSION_1_2) ? std::string("OK") : std::string("FAIL")) << std::endl;
-	std::cout << "\tGLEW_VERSION_1_3 " << ((GLEW_VERSION_1_3) ? std::string("OK") : std::string("FAIL"))  << std::endl;
-	std::cout << "\tGLEW_VERSION_1_4 " << ((GLEW_VERSION_1_4) ? std::string("OK") : std::string("FAIL"))  << std::endl;
-	std::cout << "\tGLEW_VERSION_1_5 " << ((GLEW_VERSION_1_5) ? std::string("OK") : std::string("FAIL")) << std::endl;
-	std::cout << "\tGLEW_VERSION_2_0 " << ((GLEW_VERSION_2_0) ? std::string("OK") : std::string("FAIL")) << std::endl;
+	//std::cout << "\tGLEW_VERSION_1_1 " << ((GLEW_VERSION_1_1) ? std::string("OK") : std::string("FAIL")) << std::endl;
+	//std::cout << "\tGLEW_VERSION_1_2 " << ((GLEW_VERSION_1_2) ? std::string("OK") : std::string("FAIL")) << std::endl;
+	//std::cout << "\tGLEW_VERSION_1_3 " << ((GLEW_VERSION_1_3) ? std::string("OK") : std::string("FAIL"))  << std::endl;
+	//std::cout << "\tGLEW_VERSION_1_4 " << ((GLEW_VERSION_1_4) ? std::string("OK") : std::string("FAIL"))  << std::endl;
+	//std::cout << "\tGLEW_VERSION_1_5 " << ((GLEW_VERSION_1_5) ? std::string("OK") : std::string("FAIL")) << std::endl;
+	//std::cout << "\tGLEW_VERSION_2_0 " << ((GLEW_VERSION_2_0) ? std::string("OK") : std::string("FAIL")) << std::endl;
 	std::cout << "\tGLEW_VERSION_2_1 " << ((GLEW_VERSION_2_1) ? std::string("OK") : std::string("FAIL")) << std::endl;
 	std::cout << "\tGLEW_VERSION_3_0 " << ((GLEW_VERSION_3_0) ? std::string("OK") : std::string("FAIL")) << std::endl;
 	std::cout << "\tGLEW_VERSION_3_1 " << ((GLEW_VERSION_3_1) ? std::string("OK") : std::string("FAIL")) << std::endl;
 	std::cout << "\tGLEW_VERSION_3_2 " << ((GLEW_VERSION_3_2) ? std::string("OK") : std::string("FAIL")) << std::endl;
+	std::cout << "\tGLEW_VERSION_3_3 " << ((GLEW_VERSION_3_3) ? std::string("OK") : std::string("FAIL")) << std::endl;
+	std::cout << "\tGLEW_VERSION_4_0 " << ((GLEW_VERSION_4_0) ? std::string("OK") : std::string("FAIL")) << std::endl;
+	checkForGLError("Error in 'initOpenGL'");
 }
 
 void

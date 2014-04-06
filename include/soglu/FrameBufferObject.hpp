@@ -56,11 +56,10 @@ public:
 	{ return mInitialized; }
 protected:
 	FramebufferObject mFrameBufferObject;
-	RenderbufferObject mDepthBuffer;
-	TextureObject mColorTexture;
-	/*GLuint	mFrameBufferObject,
-		mDepthBuffer,
-		mColorTexture;*/
+	RenderbufferObject mDepthAttachment;
+	//TextureObject mDepthAttachment;
+	TextureObject mColorAttachment;
+
 	bool mInitialized;
 	bool mBinded;
 	glm::ivec2 mSize;

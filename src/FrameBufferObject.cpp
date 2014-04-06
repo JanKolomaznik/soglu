@@ -19,7 +19,7 @@ GLuint
 Framebuffer::GetColorBuffer()
 {
 	SOGLU_ASSERT( mInitialized );
-	return mColorTexture;
+	return mColorAttachment.value;
 }
 
 void
@@ -34,8 +34,8 @@ Framebuffer::initialize(int aWidth, int aHeight, GLint aInternalFormat)
 	checkForGLError("Before framebuffer init.");
 	SOGLU_ASSERT(isGLContextActive());
 	mFrameBufferObject.initialize();
-	mDepthBuffer.initialize();
-	mColorTexture.initialize();
+	mDepthAttachment.initialize();
+	mColorAttachment.initialize();
 	mInitialized = true;
 	resize( aWidth, aHeight, aInternalFormat );
 }
@@ -46,8 +46,8 @@ Framebuffer::finalize()
 	if ( mInitialized ) {
 		SOGLU_ASSERT(isGLContextActive());
 		mFrameBufferObject.finalize();
-		mDepthBuffer.finalize();
-		mColorTexture.finalize();
+		mDepthAttachment.finalize();
+		mColorAttachment.finalize();
 	}
 	mInitialized = false;
 }
@@ -67,7 +67,8 @@ Framebuffer::render()
 	GL_CHECKED_CALL( glMatrixMode( GL_MODELVIEW ) );
 	GL_CHECKED_CALL( glLoadIdentity() );
 	gl::activeTexture(TextureUnitId(0));
-	GL_CHECKED_CALL( glBindTexture(GL_TEXTURE_2D, mColorTexture.value));
+	//GL_CHECKED_CALL( glBindTexture(GL_TEXTURE_2D, mColorAttachment.value));
+	GL_CHECKED_CALL( glBindTexture(GL_TEXTURE_2D, mDepthAttachment.value));
 	GL_CHECKED_CALL( glDisable( GL_TEXTURE_1D ) );
 	GL_CHECKED_CALL( glDisable( GL_TEXTURE_3D ) );
 	GL_CHECKED_CALL( glEnable( GL_TEXTURE_2D ) );
@@ -103,16 +104,47 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 {
 	SOGLU_ASSERT(isGLContextActive());
 	SOGLU_ASSERT ( mInitialized );
-	SOGLU_DEBUG_PRINT("BEFORE BINDING FRAMEBUFFER OBJECT");
 	auto framebufferBinder = getBinder(mFrameBufferObject, GL_FRAMEBUFFER);
 
 	{
-		auto renderbufferBinder = getBinder(mDepthBuffer);
+		auto depthBinder = getBinder(mDepthAttachment);
 		GL_CHECKED_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, aWidth, aHeight));
 	}
+	GL_CHECKED_CALL(glFramebufferRenderbuffer(
+				GL_FRAMEBUFFER,
+				GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER,
+				mDepthAttachment.value
+				));
+	/*{
+		auto depthBinder = getBinder(mDepthAttachment, GL_TEXTURE_2D);
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP ));
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP ));
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST ));
+		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ));
+		GL_CHECKED_CALL(glTexImage2D(
+					GL_TEXTURE_2D,
+					0,
+					GL_DEPTH_COMPONENT,
+					aWidth,
+					aHeight,
+					0,
+					GL_DEPTH_COMPONENT,
+					GL_FLOAT,
+					nullptr
+					));
+	}
+	GL_CHECKED_CALL(glFramebufferTexture2D(
+				GL_FRAMEBUFFER,
+				GL_DEPTH_ATTACHMENT,
+				GL_TEXTURE_2D,
+				mDepthAttachment.value,
+				0
+				));*/
+
 
 	{
-		auto textureBinder = getBinder(mColorTexture, GL_TEXTURE_2D);
+		auto textureBinder = getBinder(mColorAttachment, GL_TEXTURE_2D);
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP ));
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP ));
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST ));
@@ -129,21 +161,14 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 					nullptr
 					));
 	}
-
-	GL_CHECKED_CALL( glFramebufferRenderbuffer(
-				GL_FRAMEBUFFER,
-				GL_DEPTH_ATTACHMENT,
-				GL_RENDERBUFFER,
-				mDepthBuffer.value
-				) );
-
-	GL_CHECKED_CALL( glFramebufferTexture2D(
+	GL_CHECKED_CALL(glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
 				GL_TEXTURE_2D,
-				mColorTexture.value,
+				mColorAttachment.value,
 				0
-				) );
+				));
+
 
 	mSize.x = aWidth;
 	mSize.y = aHeight;

@@ -174,6 +174,7 @@ public:
 	{
 		if (mProgramId) {
 			SOGLU_ASSERT(isGLContextActive());
+			SOGLU_DEBUG_PRINT("Deleting shader program " << mProgramId);
 			boost::fusion::for_each(mAttachedShaders, detail::ShaderListDetacher(mProgramId));
 			boost::fusion::for_each(mAttachedShaders, detail::ShaderListDeleter());
 			gl::deleteProgram(mProgramId);

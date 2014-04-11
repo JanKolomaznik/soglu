@@ -163,9 +163,9 @@ generateBoundingBoxBuffers(const BoundingBox3D &aBBox)
 {
 	static const unsigned restartIndex = 10;
 	static const std::array<unsigned, 20> indices = {
-		0, 4, 3, 7, 2, 6, 1, 5, 0, 4,
-		restartIndex, 4, 5, 7, 6,
-		restartIndex, 0, 3, 2, 1};
+		4, 0, 5, 1, 6, 2, 7, 3, 4, 0,
+		restartIndex, 7, 4, 6, 5,
+		restartIndex, 0, 3, 1, 2};
 
 	VertexIndexBuffers result;
 	result.vertices.resize(8);

@@ -106,7 +106,7 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 	SOGLU_ASSERT ( mInitialized );
 	auto framebufferBinder = getBinder(mFrameBufferObject, GL_FRAMEBUFFER);
 
-	{
+	/*{
 		auto depthBinder = getBinder(mDepthAttachment);
 		GL_CHECKED_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, aWidth, aHeight));
 	}
@@ -115,8 +115,8 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 				GL_DEPTH_ATTACHMENT,
 				GL_RENDERBUFFER,
 				mDepthAttachment.value
-				));
-	/*{
+				));*/
+	{
 		auto depthBinder = getBinder(mDepthAttachment, GL_TEXTURE_2D);
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP ));
 		GL_CHECKED_CALL(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP ));
@@ -140,7 +140,7 @@ Framebuffer::resize(int aWidth, int aHeight, GLint aInternalFormat)
 				GL_TEXTURE_2D,
 				mDepthAttachment.value,
 				0
-				));*/
+				));
 
 
 	{

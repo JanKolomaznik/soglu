@@ -54,10 +54,10 @@ public:
 	bool
 	isInitialized() const
 	{ return mInitialized; }
-protected:
+//protected:
 	FramebufferObject mFrameBufferObject;
-	RenderbufferObject mDepthAttachment;
-	//TextureObject mDepthAttachment;
+	//RenderbufferObject mDepthAttachment;
+	TextureObject mDepthAttachment;
 	TextureObject mColorAttachment;
 
 	bool mInitialized;

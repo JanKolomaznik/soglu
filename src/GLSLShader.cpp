@@ -142,18 +142,22 @@ createShaderProgramFromSources(const ShaderProgramSource &aSource, const std::st
 	GLSLProgram program(true);
 	{
 		std::ostringstream vertexSource;
-		vertexSource << "#version " << aSource.version << std::endl;
+		vertexSource 
+				<< "#version " << aSource.version << std::endl
+				<< aPrefix << std::endl;
 		for (const auto &src : aSource.vertexShaderSources) {
-			vertexSource << src;
+			vertexSource << src << std::endl;
 		}
 		program.attachShader(std::make_shared<GLSLVertexShader>(vertexSource.str()));
 	}
 
 	{
 		std::ostringstream fragmentSource;
-		fragmentSource << "#version " << aSource.version << std::endl;
+		fragmentSource 
+				<< "#version " << aSource.version << std::endl
+				<< aPrefix << std::endl;
 		for (const auto &src : aSource.fragmentShaderSources) {
-			fragmentSource << src;
+			fragmentSource << src << std::endl;
 		}
 		program.attachShader(std::make_shared<GLSLFragmentShader>(fragmentSource.str()));
 	}

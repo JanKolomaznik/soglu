@@ -130,4 +130,38 @@ Sampler::setParameter(int aParameter, int aParameterValue)
 	GL_CHECKED_CALL(glSamplerParameteri(value, aParameter, aParameterValue));
 }
 
+void
+Sampler::setParameter(int aParameter, const glm::fvec4 &aParameterValues)
+{
+	GL_CHECKED_CALL(glSamplerParameterfv(value, aParameter, glm::value_ptr(aParameterValues)));
+}
+
+GLEnabler::GLEnabler(int aValue) 
+	: mValue(aValue)
+{
+	SOGLU_ASSERT(isGLContextActive());
+	GL_CHECKED_CALL(glEnable(mValue));
+}
+
+GLEnabler::~GLEnabler() 
+{
+	// TODO - check previous state
+	SOGLU_ASSERT(isGLContextActive());
+	GL_CHECKED_CALL(glDisable(mValue));
+}
+
+GLDisabler::GLDisabler(int aValue) 
+	: mValue(aValue)
+{
+	SOGLU_ASSERT(isGLContextActive());
+	GL_CHECKED_CALL(glDisable(mValue));
+}
+
+GLDisabler::~GLDisabler() 
+{
+	// TODO - check previous state
+	SOGLU_ASSERT(isGLContextActive());
+	GL_CHECKED_CALL(glEnable(mValue));
+}
+
 } // namespace soglu

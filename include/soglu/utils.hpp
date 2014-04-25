@@ -15,7 +15,15 @@ struct GLValueWrapper
 	typedef TValue ValueType;
 	GLValueWrapper() : value(tInvalidValue) {}
 	GLValueWrapper(const ValueType &aValue) : value(aValue) {}
+	GLValueWrapper(const GLValueWrapper<TValue, TTag, tInvalidValue> &aValue) : value(aValue.value) {}
 	operator bool() const { return tInvalidValue != value; }
+
+	GLValueWrapper<TValue, TTag, tInvalidValue> &
+	operator=(const GLValueWrapper<TValue, TTag, tInvalidValue> &aValue)
+	{
+		value = aValue.value;
+		return *this;
+	}
 
 	ValueType value;
 };
@@ -140,6 +148,8 @@ struct VertexArrayObject
 	unbind();
 };
 
+// TODO make objects noncopyable
+
 template<typename TBindable>
 struct GLBinder
 {
@@ -249,6 +259,34 @@ getBinder(TBindable &aBindable, TTarget aTarget)
 	return GLTargetBinder<TBindable, TTarget>(aBindable, aTarget);
 }
 
+struct GLEnabler
+{
+	GLEnabler(int aValue);
+	~GLEnabler();
+
+	int mValue;
+};
+
+struct GLDisabler
+{
+	GLDisabler(int aValue);
+	~GLDisabler();
+
+	int mValue;
+};
+
+inline GLEnabler
+enable(int aValue) 
+{
+	return GLEnabler(aValue);
+}
+
+inline GLDisabler
+disable(int aValue) 
+{
+	return GLDisabler(aValue);
+}
+
 class Sampler : public SamplerId
 {
 public:
@@ -271,6 +309,8 @@ public:
 	void
 	setParameter(int aParameter, int aParameterValue);
 
+	void
+	setParameter(int aParameter, const glm::fvec4 &aParameterValues);
 protected:
 	Sampler(const Sampler &);
 };

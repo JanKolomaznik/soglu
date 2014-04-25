@@ -64,8 +64,6 @@ drawVertexIndexBuffers(
 	GL_CHECKED_CALL(glEnable(GL_PRIMITIVE_RESTART));
 	GL_CHECKED_CALL(glPrimitiveRestartIndex(aData.primitiveRestartIndex));
 
-	GLuint vertexVAO;
-
 	BufferObject vertices;
 	vertices.initialize();
 

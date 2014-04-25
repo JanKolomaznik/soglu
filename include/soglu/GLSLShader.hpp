@@ -188,6 +188,11 @@ public:
 		finalize();
 	}
 
+	operator bool() const
+	{
+		return id() != 0;
+	}
+
 	GLSLProgram &
 	operator=(GLSLProgram &&aProgram)
 	{
@@ -317,6 +322,18 @@ protected:
 };
 
 GLSLProgram createGLSLProgramFromVertexAndFragmentShader(const boost::filesystem::path &aVertexShader, const boost::filesystem::path &aFragmentShader);
+
+struct ShaderProgramSource {
+	int version;
+	std::vector<std::string> vertexShaderSources;
+	std::vector<std::string> fragmentShaderSources;
+};
+
+ShaderProgramSource
+loadShaderProgramSource(const boost::filesystem::path &aConfigFile, const boost::filesystem::path &aWorkingDirectory);
+
+GLSLProgram
+createShaderProgramFromSources(const ShaderProgramSource &aSource, const std::string &aPrefix);
 
 void testRender(GLSLProgram &aProgram, float aAspectRatio);
 

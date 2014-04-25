@@ -2,6 +2,9 @@
 #include "soglu/GLSLShader.hpp"
 
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 namespace soglu {
 
 std::string
@@ -79,7 +82,8 @@ std::string loadFile(boost::filesystem::path filename)
 	return output;
 }
 
-GLSLProgram createGLSLProgramFromVertexAndFragmentShader(const boost::filesystem::path &aVertexShader, const boost::filesystem::path &aFragmentShader)
+GLSLProgram
+createGLSLProgramFromVertexAndFragmentShader(const boost::filesystem::path &aVertexShader, const boost::filesystem::path &aFragmentShader)
 {
 	std::string vertexShader = loadFile(aVertexShader);
 	std::string fragmentShader = loadFile(aFragmentShader);
@@ -89,6 +93,74 @@ GLSLProgram createGLSLProgramFromVertexAndFragmentShader(const boost::filesystem
 	program.link();
 	program.validate();
 	std::cout << "Program info " << getShaderProgramInfoLog(program.id()) << std::endl;
+	return program;
+}
+
+std::vector<boost::filesystem::path>
+getFilenamesFromPropertyTreeNode(const boost::property_tree::ptree &node, const boost::filesystem::path &aWorkingDirectory)
+{
+	std::vector<boost::filesystem::path>  filenames;
+	for (const auto &child : node) {
+		filenames.push_back(boost::filesystem::canonical(child.second.data(), aWorkingDirectory));
+	}
+	return filenames;
+}
+
+ShaderProgramSource
+loadShaderProgramSource(const boost::filesystem::path &aConfigFile, const boost::filesystem::path &aWorkingDirectory)
+{
+	using boost::property_tree::ptree;
+	using boost::property_tree::json_parser::read_json;
+	ptree pt;
+
+	ShaderProgramSource config;
+
+	read_json(aConfigFile.string(), pt);
+
+	config.version = pt.get("version", 150);
+	//pt.get();
+
+	std::vector<boost::filesystem::path> vertexShaderSourceFiles =
+			getFilenamesFromPropertyTreeNode(pt.get_child("sources.vertex_shader.files"), aWorkingDirectory);
+
+	std::vector<boost::filesystem::path> fragmentShaderSourceFiles =
+			getFilenamesFromPropertyTreeNode(pt.get_child("sources.fragment_shader.files"), aWorkingDirectory);
+
+	for (const auto &filename : vertexShaderSourceFiles) {
+		config.vertexShaderSources.push_back(soglu::loadFile(filename));
+	}
+
+	for (const auto &filename : fragmentShaderSourceFiles) {
+		config.fragmentShaderSources.push_back(soglu::loadFile(filename));
+	}
+	return config;
+}
+
+GLSLProgram
+createShaderProgramFromSources(const ShaderProgramSource &aSource, const std::string &aPrefix)
+{
+	GLSLProgram program(true);
+	{
+		std::ostringstream vertexSource;
+		vertexSource << "#version " << aSource.version << std::endl;
+		for (const auto &src : aSource.vertexShaderSources) {
+			vertexSource << src;
+		}
+		program.attachShader(std::make_shared<GLSLVertexShader>(vertexSource.str()));
+	}
+
+	{
+		std::ostringstream fragmentSource;
+		fragmentSource << "#version " << aSource.version << std::endl;
+		for (const auto &src : aSource.fragmentShaderSources) {
+			fragmentSource << src;
+		}
+		program.attachShader(std::make_shared<GLSLFragmentShader>(fragmentSource.str()));
+	}
+	program.link();
+	program.validate();
+	std::cout << "Program info " << getShaderProgramInfoLog(program.id()) << std::endl;
+
 	return program;
 }
 

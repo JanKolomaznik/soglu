@@ -168,7 +168,7 @@ createShaderProgramFromSources(const ShaderProgramSource &aSource, const std::st
 	return program;
 }
 
-void testRender(GLSLProgram &aProgram, float aAspectRatio)
+/*void testRender(GLSLProgram &aProgram, float aAspectRatio)
 {
 	static const GLfloat points[] = { -0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 0.0f, 1.0f };
 	GLuint g_verticesVBO;
@@ -207,6 +207,6 @@ void testRender(GLSLProgram &aProgram, float aAspectRatio)
     glDeleteBuffers(1, &g_verticesVBO);
 	glBindVertexArray(0);
     glDeleteVertexArrays(1, &g_vao);
-}
+}*/
 
 }  // namespace soglu

@@ -96,6 +96,45 @@ drawVertexIndexBuffers(
 }
 
 void
+drawVertices(
+	const glm::fvec2 *aVertices,
+	int aSize,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	)
+{
+	BufferObject vertices;
+	vertices.initialize();
+
+	{
+		auto bufferBinder = getBinder(vertices, GL_ARRAY_BUFFER);
+		GL_CHECKED_CALL(glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(GLfloat) * aSize, (GLfloat*) aVertices, GL_STATIC_DRAW));
+	}
+
+	VertexArrayObject vertexArray;
+	vertexArray.initialize();
+	auto arrayBinder = getBinder(vertexArray);
+	{
+		auto vertexBufferBinder = getBinder(vertices, GL_ARRAY_BUFFER);
+		GL_CHECKED_CALL(glVertexAttribPointer(aAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, 0));
+		GL_CHECKED_CALL(glEnableVertexAttribArray(aAttributeLocation));
+
+		GL_CHECKED_CALL(glDrawArrays(aPrimitiveType, 0, aSize));
+	}
+}
+
+void
+drawVertices(
+	const glm::fvec3 *aVertices,
+	int aSize,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	)
+{
+	SOGLU_ASSERT(false);
+}
+
+void
 drawTexturedQuad( const glm::fvec2 &point1, const glm::fvec2 &point3 )
 {
 	glm::fvec2 point2(point3[0], point1[1]);
@@ -133,6 +172,18 @@ drawRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3)
 
 		GLVertexVector(point4);
 	glEnd();
+}
+
+std::array<glm::fvec2, 4>
+generateRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3)
+{
+	std::array<glm::fvec2, 4> result = {
+		point1,
+		glm::fvec2(point3[0], point1[1]),
+		point3,
+		glm::fvec2(point1[0], point3[1])
+	};
+	return result;
 }
 
 VertexIndexBuffers
@@ -385,9 +436,9 @@ SetViewAccordingToCamera( const Camera &camera )
 
 	gluPerspective(
 		camera.GetFieldOfView(),
- 		camera.GetAspectRatio(),
- 		camera.GetZNear(),
- 		camera.GetZFar()
+		camera.GetAspectRatio(),
+		camera.GetZNear(),
+		camera.GetZFar()
 		);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -433,9 +484,9 @@ getProjectionAndViewMatricesFromCamera( const Camera &camera, glm::dmat4x4 &aPro
 
 	aProjection = glm::perspective<double>(
 		camera.GetFieldOfView(),
- 		camera.GetAspectRatio(),
- 		camera.GetZNear(),
- 		camera.GetZFar()
+		camera.GetAspectRatio(),
+		camera.GetZNear(),
+		camera.GetZFar()
 	);
 
 	aView = glm::lookAt<double>(

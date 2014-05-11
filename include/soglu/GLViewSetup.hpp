@@ -5,6 +5,7 @@
 #include <ostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_precision.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <soglu/ErrorHandling.hpp>
 
@@ -47,5 +48,11 @@ getViewSetupFromCamera( const PerspectiveCamera &camera );
 
 GLViewSetup
 getViewSetupFromOrthoCamera( const OrthoCamera &camera );
+
+GLViewSetup
+getViewSetupForViewportOrthoView(const glm::ivec2 &aTopLeftCorner,
+		const glm::ivec2 &aBottomRightCorner,
+		float aNear = -1000.0f,
+		float aFar = 1000.0f);
 
 } //namespace soglu

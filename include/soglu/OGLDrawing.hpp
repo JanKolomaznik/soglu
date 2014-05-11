@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #include <tuple>
 
 #include <soglu/BoundingBox.hpp>
@@ -37,11 +38,42 @@ drawVertexIndexBuffers(
 	GLSLAttributeLocation aAttributeLocation
 	);
 
+void
+drawVertices(
+	const glm::fvec2 *aVertices,
+	int aSize,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	);
+
+void
+drawVertices(
+	const glm::fvec3 *aVertices,
+	int aSize,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	);
+
+
+template<typename TContainer>
+void
+drawVertices(
+	const TContainer &aContainer,
+	GLPrimitiveType aPrimitiveType,
+	GLSLAttributeLocation aAttributeLocation
+	)
+{
+	drawVertices(aContainer.data(), aContainer.size(), aPrimitiveType, aAttributeLocation);
+}
+
 VertexIndexBuffers
 generateBoundingBoxBuffersWireframe(const BoundingBox3D &aBBox);
 
 VertexIndexBuffers
 generateBoundingBoxBuffers(const BoundingBox3D &aBBox);
+
+std::array<glm::fvec2, 4>
+generateRectangle(const glm::fvec2 &point1, const glm::fvec2 &point3);
 
 void
 drawBoundingBox(const BoundingBox3D &aBBox);

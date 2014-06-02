@@ -4,31 +4,34 @@ namespace M4D
 {
 
 const GLint SELECTION_BUFFER_COLOR_DEPTH = GL_RGBA16;
-	
+
 boost::filesystem::path gPickingShaderPath;
-	
+
 void
 PickManager::initialize( unsigned aPickingRadius )
 {
-	ASSERT(isGLContextActive());
+	SOGLU_ASSERT(false && "Unfinished");
+/*	ASSERT(isGLContextActive());
 	mPickingRadius = aPickingRadius;
 	mCgEffect.Initialize( gPickingShaderPath );
 	mFrameBuffer.Initialize( 2*mPickingRadius, 2*mPickingRadius, SELECTION_BUFFER_COLOR_DEPTH );
-	
-	mBuffer = BufferArray( new uint16[4*2*mPickingRadius*2*mPickingRadius] );
+
+	mBuffer = BufferArray( new uint16[4*2*mPickingRadius*2*mPickingRadius] );*/
 }
 
 void
 PickManager::finalize()
 {
-	ASSERT((!mCgEffect.isInitialized() && !mFrameBuffer.isInitialized()) || isGLContextActive());
+	SOGLU_ASSERT(false && "Unfinished");
+/*	ASSERT((!mCgEffect.isInitialized() && !mFrameBuffer.isInitialized()) || isGLContextActive());
 	mCgEffect.Finalize();
-	mFrameBuffer.Finalize();
+	mFrameBuffer.Finalize();*/
 }
 
 void
 PickManager::getIDs( SelectedIDsSet &aIDs )
 {
+	SOGLU_ASSERT(false && "Unfinished");
 	for( size_t i = 0; i < 2*mPickingRadius*2*mPickingRadius; ++i ) {
 		uint16 r, g, b, a;
 		r = mBuffer[3*i];
@@ -41,21 +44,22 @@ PickManager::getIDs( SelectedIDsSet &aIDs )
 		}
 	}
 }
-	
+
 void
 PickManager::getBufferFromGPU()
 {
-	ASSERT(isGLContextActive());
+	SOGLU_ASSERT(false && "Unfinished");
+	/*ASSERT(isGLContextActive());
 	ASSERT( mBuffer );
 	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, mFrameBuffer.GetColorBuffer() ) );
-	GL_CHECKED_CALL( glGetTexImage(	
-				GL_TEXTURE_2D, 
-				0, 
-				SELECTION_BUFFER_COLOR_DEPTH, 
-				GL_UNSIGNED_SHORT, 
+	GL_CHECKED_CALL( glGetTexImage(
+				GL_TEXTURE_2D,
+				0,
+				SELECTION_BUFFER_COLOR_DEPTH,
+				GL_UNSIGNED_SHORT,
 				(void*)mBuffer.get()
 				) );
-	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
+	GL_CHECKED_CALL( glBindTexture( GL_TEXTURE_2D, 0 ) );*/
 }
-	
+
 } //namespace M4D

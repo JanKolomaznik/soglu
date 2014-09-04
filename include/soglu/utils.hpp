@@ -16,6 +16,11 @@ struct GLValueWrapper
 	GLValueWrapper() : value(tInvalidValue) {}
 	GLValueWrapper(const ValueType &aValue) : value(aValue) {}
 	GLValueWrapper(const GLValueWrapper<TValue, TTag, tInvalidValue> &aValue) : value(aValue.value) {}
+	GLValueWrapper(GLValueWrapper<TValue, TTag, tInvalidValue> &&aValue)
+		: value(aValue.value)
+	{
+		aValue.value = tInvalidValue;
+	}
 	operator bool() const { return tInvalidValue != value; }
 
 	GLValueWrapper<TValue, TTag, tInvalidValue> &
@@ -33,6 +38,11 @@ struct GLGeneratedValueWrapperCRTP : TValueWrapper
 {
 	GLGeneratedValueWrapperCRTP() : TValueWrapper() {}
 	GLGeneratedValueWrapperCRTP(const typename TValueWrapper::ValueType &aValue) : TValueWrapper(aValue) {}
+	GLGeneratedValueWrapperCRTP(GLGeneratedValueWrapperCRTP &&aWrapper)
+		: TValueWrapper(std::move(aWrapper))
+	{
+	}
+
 	~GLGeneratedValueWrapperCRTP() {}
 
 	void
@@ -276,13 +286,13 @@ struct GLDisabler
 };
 
 inline GLEnabler
-enable(int aValue) 
+enable(int aValue)
 {
 	return GLEnabler(aValue);
 }
 
 inline GLDisabler
-disable(int aValue) 
+disable(int aValue)
 {
 	return GLDisabler(aValue);
 }

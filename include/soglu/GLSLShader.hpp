@@ -293,6 +293,7 @@ public:
 		setUniformByName(aUniformName + ".realSize", aImage.getExtents().realMaximum - aImage.getExtents().realMinimum );
 		setUniformByName(aUniformName + ".realMinimum", aImage.getExtents().realMinimum );
 		setUniformByName(aUniformName + ".realMaximum", aImage.getExtents().realMaximum );
+		setUniformByName(aUniformName + ".elementExtents", aImage.getExtents().elementExtents );
 	}
 
 	void

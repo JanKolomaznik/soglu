@@ -147,8 +147,8 @@ struct GLTextureImageTyped: public GLTextureImage
 	typedef boost::shared_ptr< GLTextureImageTyped > Ptr;
 	typedef boost::weak_ptr< GLTextureImageTyped > WPtr;
 
-	GLTextureImageTyped( GLuint aTexID, bool aLinearInterpolation, ExtentsRecord< Dim > aExtents )
-	: GLTextureImage( aTexID, aLinearInterpolation ), mExtents( aExtents )
+	GLTextureImageTyped( GLuint aTexID, bool aLinearInterpolation, ExtentsRecord< Dim > aExtents, glm::fvec2 aMappedInterval )
+		: GLTextureImage( aTexID, aLinearInterpolation ), mExtents( aExtents ), mMappedInterval(aMappedInterval)
 	{ }
 
 	bool
@@ -166,7 +166,7 @@ struct GLTextureImageTyped: public GLTextureImage
 
 	glm::fvec2
 	getMappedInterval()const
-	{ return glm::fvec2(0, 65535);/*mMappedInterval;*/ }
+	{ return mMappedInterval; }
 
 	/*bool
 	IsActual()const
@@ -240,6 +240,7 @@ struct GLTextureImageTyped: public GLTextureImage
 protected:
 	//typename M4D::Imaging::AImageRegionDim<Dim>::ConstPtr	_image;
 	ExtentsRecord<Dim> mExtents;
+	glm::fvec2 mMappedInterval;
 };
 
 

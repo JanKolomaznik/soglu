@@ -57,7 +57,7 @@ void
 checkForShaderProgramValidationError(GLSLProgramId aProgramId)
 {
 	GLint compileStatus = GL_TRUE;
-	GL_CHECKED_CALL(glGetProgramiv(aProgramId, GL_LINK_STATUS, &compileStatus));
+	GL_CHECKED_CALL(glGetProgramiv(aProgramId, GL_VALIDATE_STATUS, &compileStatus));
 	if (compileStatus == GL_TRUE) {
 			return;
 	}
@@ -113,7 +113,10 @@ loadShaderProgramSource(const boost::filesystem::path &aConfigFile, const boost:
 	using boost::property_tree::json_parser::read_json;
 	ptree pt;
 
+	std::cout << "Loading shader '" << aConfigFile << "'\nWorking directory: '" << aWorkingDirectory << "'\n";
 	ShaderProgramSource config;
+
+	config.name = aConfigFile.filename().string();
 
 	read_json(aConfigFile.string(), pt);
 
@@ -126,11 +129,15 @@ loadShaderProgramSource(const boost::filesystem::path &aConfigFile, const boost:
 	std::vector<boost::filesystem::path> fragmentShaderSourceFiles =
 			getFilenamesFromPropertyTreeNode(pt.get_child("sources.fragment_shader.files"), aWorkingDirectory);
 
+	std::cout << "Vertex shader sources:\n";
 	for (const auto &filename : vertexShaderSourceFiles) {
+		std::cout << "\t" << filename << std::endl;
 		config.vertexShaderSources.push_back(soglu::loadFile(filename));
 	}
 
+	std::cout << "Fragment shader sources:\n";
 	for (const auto &filename : fragmentShaderSourceFiles) {
+		std::cout << "\t" << filename << std::endl;
 		config.fragmentShaderSources.push_back(soglu::loadFile(filename));
 	}
 	return config;
@@ -139,10 +146,12 @@ loadShaderProgramSource(const boost::filesystem::path &aConfigFile, const boost:
 GLSLProgram
 createShaderProgramFromSources(const ShaderProgramSource &aSource, const std::string &aPrefix)
 {
+	std::cout << "Shader program: " << aSource.name << "\nPrefix:\n";
+	std::cout << aPrefix << "\n";
 	GLSLProgram program(true);
 	{
 		std::ostringstream vertexSource;
-		vertexSource 
+		vertexSource
 				<< "#version " << aSource.version << std::endl
 				<< aPrefix << std::endl;
 		for (const auto &src : aSource.vertexShaderSources) {
@@ -153,7 +162,7 @@ createShaderProgramFromSources(const ShaderProgramSource &aSource, const std::st
 
 	{
 		std::ostringstream fragmentSource;
-		fragmentSource 
+		fragmentSource
 				<< "#version " << aSource.version << std::endl
 				<< aPrefix << std::endl;
 		for (const auto &src : aSource.fragmentShaderSources) {
@@ -163,7 +172,8 @@ createShaderProgramFromSources(const ShaderProgramSource &aSource, const std::st
 	}
 	program.link();
 	program.validate();
-	std::cout << "Program info " << getShaderProgramInfoLog(program.id()) << std::endl;
+	std::cout << "Program info " << program.id() << std::endl;
+	std::cout << getShaderProgramInfoLog(program.id()) << std::endl;
 
 	return program;
 }

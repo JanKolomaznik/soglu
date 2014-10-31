@@ -325,6 +325,7 @@ protected:
 GLSLProgram createGLSLProgramFromVertexAndFragmentShader(const boost::filesystem::path &aVertexShader, const boost::filesystem::path &aFragmentShader);
 
 struct ShaderProgramSource {
+	std::string name;
 	int version;
 	std::vector<std::string> vertexShaderSources;
 	std::vector<std::string> fragmentShaderSources;

@@ -22,6 +22,7 @@ SET(${PROJECT_NAME}_HEADERS
 	"include/soglu/OGLDrawing.hpp"
 	"include/soglu/OpenGLWrappers.hpp"
 	"include/soglu/utils.hpp"
+	"include/soglu/debug.hpp"
 	)
 
 SET(${PROJECT_NAME}_SOURCES 
@@ -33,6 +34,7 @@ SET(${PROJECT_NAME}_SOURCES
 	"src/FrameBufferObject.cpp"
 	"src/OpenGLWrappers.cpp"
 	"src/utils.cpp"  
+	"src/debug.cpp"  
 	)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})

@@ -77,8 +77,16 @@ typedef GLValueWrapper<uint32_t, BufferTag, 0> BufferId;
 typedef GLValueWrapper<uint32_t, VertexArrayTag, 0> VertexArrayId;
 
 struct TextureObject
-	: GLGeneratedValueWrapperCRTP<TextureId, TextureObject>
+	: public GLGeneratedValueWrapperCRTP<TextureId, TextureObject>
 {
+	typedef GLGeneratedValueWrapperCRTP<TextureId, TextureObject> Super;
+	TextureObject() {}
+	TextureObject(const TextureId &aValue) : Super(aValue) {}
+	TextureObject(TextureObject &&aWrapper)
+		: Super(std::move(aWrapper))
+	{
+	}
+
 	void
 	initialize();
 
@@ -90,11 +98,21 @@ struct TextureObject
 
 	void
 	unbind(uint32_t aTextureTarget);
+private:
+	TextureObject(const TextureObject &);
 };
 
 struct FramebufferObject
 	: GLGeneratedValueWrapperCRTP<FramebufferId, FramebufferObject>
 {
+	typedef GLGeneratedValueWrapperCRTP<FramebufferId, FramebufferObject> Super;
+	FramebufferObject() {}
+	FramebufferObject(const FramebufferId &aValue) : Super(aValue) {}
+	FramebufferObject(FramebufferObject &&aWrapper)
+		: Super(std::move(aWrapper))
+	{
+	}
+
 	void
 	initialize();
 
@@ -106,6 +124,8 @@ struct FramebufferObject
 
 	void
 	unbind(uint32_t aFramebufferType);
+private:
+	FramebufferObject(const FramebufferObject &);
 };
 
 struct RenderbufferObject
@@ -122,6 +142,8 @@ struct RenderbufferObject
 
 	void
 	unbind();
+private:
+	RenderbufferObject(const RenderbufferObject &);
 };
 
 

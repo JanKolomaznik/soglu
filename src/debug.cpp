@@ -6,7 +6,9 @@ namespace soglu {
 std::string
 info(const TextureId &aTexture)
 {
+	SOGLU_ASSERT(false);
 	//GL_CHECKED_CALL(glGe)
+	return std::string();
 }
 
 #define STRINGIFY_ENUM(ENUM)\

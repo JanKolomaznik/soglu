@@ -280,7 +280,27 @@ public:
 		try {
 		setUniform(getUniformLocation(aUniformName), aValue);
 		} catch (EGLSLInvalidUniformName &) {
+			SOGLU_DEBUG_PRINT("Invalid uniform name");
+		}
+	}
 
+	template<typename TValue>
+	void
+	setUniform(GLSLUniformLocation aUniformLocation, const TValue *aValue, size_t aCount)
+	{
+		// Allow ADL
+		using namespace soglu::gl;
+		setProgramUniform(mProgramId, aUniformLocation, aValue, aCount);
+	}
+
+	template<typename TValue>
+	void
+	setUniformByName(const std::string &aUniformName, const TValue *aValue, size_t aCount)
+	{
+		try {
+		setUniform(getUniformLocation(aUniformName), aValue, aCount);
+		} catch (EGLSLInvalidUniformName &) {
+			SOGLU_DEBUG_PRINT("Invalid uniform name");
 		}
 	}
 

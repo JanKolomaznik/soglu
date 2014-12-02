@@ -86,6 +86,22 @@ GLSLAttributeLocation getAttribLocation(GLSLProgramId aProgramId, const std::str
 	SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(aVectorDimension, aSuffix) \
 	{ GL_CHECKED_CALL(glProgramUniform##aVectorDimension##aSuffix##v(aProgramId, aUniformLocation, 1, glm::value_ptr(aValue))); }
 
+
+
+#define SOGLU_DECLARE_SET_PROGRAM_UNIFORM_WITH_COUNT(aSuffix) \
+	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const SOGLU_SUFFIX_TO_TYPE_##aSuffix *aValue, size_t aCount)
+
+#define SOGLU_DEFINE_SET_PROGRAM_UNIFORM_WITH_COUNT(aSuffix) \
+	SOGLU_DECLARE_SET_PROGRAM_UNIFORM_WITH_COUNT(aSuffix) \
+	{ GL_CHECKED_CALL(glProgramUniform1##aSuffix##v(aProgramId, aUniformLocation, aCount, aValue)); }
+
+#define SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(aVectorDimension, aSuffix) \
+	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const glm::detail::tvec##aVectorDimension<SOGLU_SUFFIX_TO_TYPE_##aSuffix> *aValue, size_t aCount)
+
+#define SOGLU_DEFINE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(aVectorDimension, aSuffix) \
+	SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(aVectorDimension, aSuffix) \
+	{ GL_CHECKED_CALL(glProgramUniform##aVectorDimension##aSuffix##v(aProgramId, aUniformLocation, aCount, glm::value_ptr(aValue[0]))); }
+
 SOGLU_DECLARE_SET_PROGRAM_UNIFORM(f);
 SOGLU_DECLARE_SET_PROGRAM_UNIFORM(i);
 SOGLU_DECLARE_SET_PROGRAM_UNIFORM(ui);
@@ -105,6 +121,23 @@ SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(4, i);
 SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(2, ui);
 SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(3, ui);
 SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(4, ui);
+
+//------------------------------------------------
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_WITH_COUNT(f);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_WITH_COUNT(i);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_WITH_COUNT(ui);
+
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(2, f);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(3, f);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(4, f);
+
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(2, i);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(3, i);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(4, i);
+
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(2, ui);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(3, ui);
+SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(4, ui);
 
 inline void setProgramUniformSampler(GLSLProgramId aProgramId, GLSLUniformLocation aSamplerLocation, int aSampler)
 {

@@ -23,6 +23,11 @@ struct GLValueWrapper
 	}
 	operator bool() const { return tInvalidValue != value; }
 
+	operator ValueType() const
+	{
+		return value;
+	}
+
 	GLValueWrapper<TValue, TTag, tInvalidValue> &
 	operator=(const GLValueWrapper<TValue, TTag, tInvalidValue> &aValue)
 	{

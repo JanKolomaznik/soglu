@@ -145,10 +145,10 @@ dollyCamera(TCamera &aCamera, glm::fvec3 aMoveVector)
 }
 
 template <typename TType>
-glm::detail::tvec3<TType>
-getDirectionFromScreenCoordinatesAndCameraPosition(const glm::detail::tvec2<TType> &aScreenCoords, const GLViewSetup &aViewSetup, const glm::detail::tvec3<TType> &aCameraPos )
+glm::tvec3<TType>
+getDirectionFromScreenCoordinatesAndCameraPosition(const glm::tvec2<TType> &aScreenCoords, const GLViewSetup &aViewSetup, const glm::tvec3<TType> &aCameraPos )
 {
-	glm::detail::tvec3<TType> tmp(glm::unProject(
+	glm::tvec3<TType> tmp(glm::unProject(
 		glm::dvec3(aScreenCoords, 0.0),
 		aViewSetup.modelView,
 		aViewSetup.projection,
@@ -157,7 +157,7 @@ getDirectionFromScreenCoordinatesAndCameraPosition(const glm::detail::tvec2<TTyp
 	//std::cout << "aViewSetup.modelView = " << glm::to_string(aViewSetup.modelView) << std::endl;
 	//std::cout << "aViewSetup.projection = " << glm::to_string(aViewSetup.projection) << std::endl;
 	//std::cout << "aViewSetup.viewport = " << glm::to_string(aViewSetup.viewport) << std::endl;
-	glm::detail::tvec3<TType> direction;
+	glm::tvec3<TType> direction;
 	/*GLint res = gluUnProject(
 			aScreenCoords[0],
 			aScreenCoords[1],

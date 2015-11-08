@@ -46,7 +46,7 @@ intervalTest( NType a, NType b, NType val ) {
 #define TYPE_FROM_GL_d	double
 
 #define GL_FUNCTION_VECTOR_DEFINITION_MACRO( FUNC_NAME, GL_FUNC, TYPE_SUFFIX, DIM ) \
-inline void FUNC_NAME( const glm::detail::tvec##DIM<TYPE_FROM_GL_##TYPE_SUFFIX> &coord )\
+inline void FUNC_NAME( const glm::tvec##DIM<TYPE_FROM_GL_##TYPE_SUFFIX> &coord )\
 { GL_FUNC##DIM## TYPE_SUFFIX ##v (glm::value_ptr(coord)); }
 
 #define GL_VERTEX_VECTOR_DEFINITION_MACRO( TYPE_SUFFIX, DIM ) \
@@ -123,5 +123,3 @@ GL_TEXTURE_VECTOR_DEFINITION_MACRO( d, 4 )
 
 
 } //namespace soglu
-
-

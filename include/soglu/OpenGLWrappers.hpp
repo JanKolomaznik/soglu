@@ -80,7 +80,7 @@ GLSLAttributeLocation getAttribLocation(GLSLProgramId aProgramId, const std::str
 	{ GL_CHECKED_CALL(glProgramUniformMatrix##aMatrixDimension##fv(aProgramId, aUniformLocation, 1, GL_FALSE, glm::value_ptr(aValue))); }
 
 #define SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(aVectorDimension, aSuffix) \
-	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const glm::detail::tvec##aVectorDimension<SOGLU_SUFFIX_TO_TYPE_##aSuffix> &aValue)
+	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const glm::tvec##aVectorDimension<SOGLU_SUFFIX_TO_TYPE_##aSuffix> &aValue)
 
 #define SOGLU_DEFINE_SET_PROGRAM_UNIFORM_VECTOR(aVectorDimension, aSuffix) \
 	SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR(aVectorDimension, aSuffix) \
@@ -96,7 +96,7 @@ GLSLAttributeLocation getAttribLocation(GLSLProgramId aProgramId, const std::str
 	{ GL_CHECKED_CALL(glProgramUniform1##aSuffix##v(aProgramId, aUniformLocation, aCount, aValue)); }
 
 #define SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(aVectorDimension, aSuffix) \
-	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const glm::detail::tvec##aVectorDimension<SOGLU_SUFFIX_TO_TYPE_##aSuffix> *aValue, size_t aCount)
+	void setProgramUniform(GLSLProgramId aProgramId, GLSLUniformLocation aUniformLocation, const glm::tvec##aVectorDimension<SOGLU_SUFFIX_TO_TYPE_##aSuffix> *aValue, size_t aCount)
 
 #define SOGLU_DEFINE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(aVectorDimension, aSuffix) \
 	SOGLU_DECLARE_SET_PROGRAM_UNIFORM_VECTOR_WITH_COUNT(aVectorDimension, aSuffix) \

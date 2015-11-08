@@ -9,10 +9,10 @@
 namespace soglu
 {
 /**
- * @ingroup imaging 
- * @author Jan Kolomaznik 
- * @file GeometricAlgorithms.h 
- * @{ 
+ * @ingroup imaging
+ * @author Jan Kolomaznik
+ * @file GeometricAlgorithms.h
+ * @{
  **/
 /*
 enum IntersectionResult {
@@ -35,7 +35,7 @@ getSomePerpendicularVector( const glm::detail::tvec3<CoordType> &v )
 	size_t maxI = maxIdx< CoordType, 3 >( v );
 	size_t minI = minIdx< CoordType, 3 >( v );
 	Vector< CoordType, 3 > v2( v );
-	
+
 	if( maxI != minI ) {
 		v2[maxI] = v[minI];
 		v2[minI] = v[maxI];
@@ -50,10 +50,10 @@ getSomePerpendicularVector( const glm::detail::tvec3<CoordType> &v )
 
 template< typename CoordType >
 inline double
-angleAndRotationAxisFromVectors( const glm::detail::tvec3<CoordType> &a, const glm::detail::tvec3<CoordType> &b, glm::detail::tvec3<CoordType> &axis )
+angleAndRotationAxisFromVectors( const glm::tvec3<CoordType> &a, const glm::tvec3<CoordType> &b, glm::tvec3<CoordType> &axis )
 {
-	glm::detail::tvec3<CoordType> aN = glm::normalize( a ); //TODO
-	glm::detail::tvec3<CoordType> bN = glm::normalize( b );
+	glm::tvec3<CoordType> aN = glm::normalize( a ); //TODO
+	glm::tvec3<CoordType> bN = glm::normalize( b );
 
 	double cAngle = static_cast< double >(glm::dot( aN, bN ));
 	double angle = acos( cAngle );
@@ -69,20 +69,20 @@ angleAndRotationAxisFromVectors( const glm::detail::tvec3<CoordType> &a, const g
 
 template< typename CoordType >
 bool
-LineIntersectionTest( 
-		const Vector< CoordType, 2 > &pointL1A, 
+LineIntersectionTest(
+		const Vector< CoordType, 2 > &pointL1A,
 		const Vector< CoordType, 2 > &pointL1B,
-		const Vector< CoordType, 2 > &pointL2A, 
+		const Vector< CoordType, 2 > &pointL2A,
 		const Vector< CoordType, 2 > &pointL2B
 	     )
 {
 	Vector< CoordType, 2 > v1 = pointL1B - pointL1A;
-	
+
 	bool first = PointLinePositionPointVector( pointL2A, pointL1A, v1 ) < 0;
 	bool second = PointLinePositionPointVector( pointL2B, pointL1A, v1 ) > 0;
 	if( ( first && second ) || !( first || second ) ) {
 		v1 = pointL2B - pointL2A;
-		
+
 		first = PointLinePositionPointVector( pointL1A, pointL2A, v1 ) < 0;
 		second = PointLinePositionPointVector( pointL1B, pointL2A, v1 ) > 0;
 		if( ( first && second ) || !( first || second ) ) {
@@ -101,10 +101,10 @@ LineIntersectionTest(
 //            2=overlap in segment from I0 to I1
 template< typename CoordType >
 int
-intersect2D_Segments( 
-		const Vector< CoordType, 2 >	&pointL1A, 
+intersect2D_Segments(
+		const Vector< CoordType, 2 >	&pointL1A,
 		const Vector< CoordType, 2 >	&pointL1B,
-		const Vector< CoordType, 2 >	&pointL2A, 
+		const Vector< CoordType, 2 >	&pointL2A,
 		const Vector< CoordType, 2 >	&pointL2B,
 		Vector< CoordType, 2 >		&intersection
 		)
@@ -195,9 +195,9 @@ intersect2D_Segments(
  **/
 /*template< typename CoordType >
 inline CoordType
-PointLinePosition2Points( 
+PointLinePosition2Points(
 		const Vector< CoordType, 2 > &point,
-		const Vector< CoordType, 2 > &lineA, 
+		const Vector< CoordType, 2 > &lineA,
 		const Vector< CoordType, 2 > &lineB
 	     )
 {
@@ -213,9 +213,9 @@ PointLinePosition2Points(
  */
 /*template< typename CoordType >
 inline CoordType
-PointLinePositionPointVector( 
+PointLinePositionPointVector(
 		const Vector< CoordType, 2 > &point,
-		const Vector< CoordType, 2 > &A, 
+		const Vector< CoordType, 2 > &A,
 		const Vector< CoordType, 2 > &v
 	     )
 {
@@ -237,9 +237,9 @@ PerpendicularVectorToVector( const Vector< CoordType, 2 > &v )
  **/
 /*template< typename CoordType >
 inline CoordType
-PointLineDistanceSquared( 
+PointLineDistanceSquared(
 		const Vector< CoordType, 2 > &point,
-		const Vector< CoordType, 2 > &A, 
+		const Vector< CoordType, 2 > &A,
 		const Vector< CoordType, 2 > &v
 		)
 {
@@ -256,9 +256,9 @@ PointLineDistanceSquared(
  **/
 /*template< typename CoordType >
 inline float32
-PointLineDistance( 
+PointLineDistance(
 		const Vector< CoordType, 2 > &point,
-		const Vector< CoordType, 2 > &A, 
+		const Vector< CoordType, 2 > &A,
 		const Vector< CoordType, 2 > &v
 		)
 {
@@ -272,9 +272,9 @@ PointLineDistance(
  **/
 /*template< typename CoordType >
 inline float32
-PointLineDistanceSquared( 
+PointLineDistanceSquared(
 		const Vector< CoordType, 3 > &point,
-		const Vector< CoordType, 3 > &A, 
+		const Vector< CoordType, 3 > &A,
 		const Vector< CoordType, 3 > &v
 		)
 {
@@ -293,9 +293,9 @@ PointLineDistanceSquared(
  **/
 /*template< typename CoordType >
 inline float32
-PointLineDistance( 
+PointLineDistance(
 		const Vector< CoordType, 3 > &point,
-		const Vector< CoordType, 3 > &A, 
+		const Vector< CoordType, 3 > &A,
 		const Vector< CoordType, 3 > &v
 		)
 {
@@ -309,9 +309,9 @@ PointLineDistance(
  **/
 /*template< typename CoordType >
 inline CoordType
-PointLineSegmentDistanceSquared( 
+PointLineSegmentDistanceSquared(
 		const Vector< CoordType, 2 > &point,
-		const Vector< CoordType, 2 > &A, 
+		const Vector< CoordType, 2 > &A,
 		const Vector< CoordType, 2 > &v
 		)
 {
@@ -322,9 +322,9 @@ PointLineSegmentDistanceSquared(
 	if( M4D::sgn(p1) != M4D::sgn(p2) ) {
 		return PointLineDistanceSquared( point, A, v );
 	}
-	return min( 
-			(point-A)*(point-A), 
-			(point-B)*(point-B) 
+	return min(
+			(point-A)*(point-A),
+			(point-B)*(point-B)
 		  );
 }*/
 
@@ -335,9 +335,9 @@ PointLineSegmentDistanceSquared(
  **/
 /*template< typename CoordType >
 inline float32
-PointLineSegmentDistance( 
+PointLineSegmentDistance(
 		const Vector< CoordType, 2 > &point,
-		const Vector< CoordType, 2 > &A, 
+		const Vector< CoordType, 2 > &A,
 		const Vector< CoordType, 2 > &v
 		)
 {
@@ -347,10 +347,10 @@ PointLineSegmentDistance(
 
 /*template< typename CoordType >
 inline IntersectionResult
-LineSegmentPlaneIntersection( 
-		const Vector< CoordType, 3 >	&lineA, 
+LineSegmentPlaneIntersection(
+		const Vector< CoordType, 3 >	&lineA,
 		const Vector< CoordType, 3 >	&lineB,
-		const Vector< CoordType, 3 >	&planePoint, 
+		const Vector< CoordType, 3 >	&planePoint,
 		const Vector< CoordType, 3 >	&planeNormal,
 		Vector< CoordType, 3 >		&intersection
 		)
@@ -359,7 +359,7 @@ LineSegmentPlaneIntersection(
 	Vector< CoordType, 3 > u( lineB - lineA );
 	Vector< CoordType, 3 > w( lineA - planePoint );
 
-	//only for debugging - ensure we aren't using random location later 
+	//only for debugging - ensure we aren't using random location later
 	D_COMMAND( intersection = Vector< CoordType, 3 >(); );
 
 	CoordType D = planeNormal * u;
@@ -385,10 +385,10 @@ LineSegmentPlaneIntersection(
 
 /*template< typename CoordType >
 inline IntersectionResult
-AxisPlaneIntersection( 
-		const Vector< CoordType, 3 >	&linePoint, 
+AxisPlaneIntersection(
+		const Vector< CoordType, 3 >	&linePoint,
 		const Vector< CoordType, 3 >	&lineDirection,
-		const Vector< CoordType, 3 >	&planePoint, 
+		const Vector< CoordType, 3 >	&planePoint,
 		const Vector< CoordType, 3 >	&planeNormal,
 		Vector< CoordType, 3 >		&intersection
 		)
@@ -398,7 +398,7 @@ AxisPlaneIntersection(
 	VectorNormalization( u );
 	Vector< CoordType, 3 > w( linePoint - planePoint );
 
-	//only for debugging - ensure we aren't using random location later 
+	//only for debugging - ensure we aren't using random location later
 	D_COMMAND( intersection = Vector< CoordType, 3 >(); );
 
 	CoordType D = planeNormal * u;
@@ -414,19 +414,19 @@ AxisPlaneIntersection(
 	// they are not parallel
 	// compute intersect param
 	CoordType sI = N / D;
-	
+
 	intersection = linePoint + sI * u;                 // compute segment intersect point
 	return ie_UNIQUE_INTERSECTION;
 }*/
 
 /*template< typename CoordType >
 bool
-lineAABBIntersections( 
-		const Vector< CoordType, 3 > &aMin, 
-		const Vector< CoordType, 3 > &aMax, 
-		const Vector< CoordType, 3 > &A, 
+lineAABBIntersections(
+		const Vector< CoordType, 3 > &aMin,
+		const Vector< CoordType, 3 > &aMax,
+		const Vector< CoordType, 3 > &A,
 		const Vector< CoordType, 3 > &v,
-		Vector< CoordType, 3 > &aIntersection1, 
+		Vector< CoordType, 3 > &aIntersection1,
 		Vector< CoordType, 3 > &aIntersection2
 	       	)
 {
@@ -450,9 +450,9 @@ lineAABBIntersections(
 
 inline bool
 closestPointsOnTwoLines(
-		const glm::fvec3 &A1, 
+		const glm::fvec3 &A1,
 		const glm::fvec3 &v1,
-		const glm::fvec3 &A2, 
+		const glm::fvec3 &A2,
 		const glm::fvec3 &v2,
 		float &t1,
 		float &t2
@@ -486,10 +486,10 @@ enum IntersectionResult {
 };
 
 inline IntersectionResult
-lineSegmentPlaneIntersection( 
-		const glm::fvec3	&lineA, 
+lineSegmentPlaneIntersection(
+		const glm::fvec3	&lineA,
 		const glm::fvec3	&lineB,
-		const glm::fvec3	&planePoint, 
+		const glm::fvec3	&planePoint,
 		const glm::fvec3	&planeNormal,
 		glm::fvec3	&intersection
 		)
@@ -524,6 +524,3 @@ lineSegmentPlaneIntersection(
 /** @} */
 
 }/*namespace soglu*/
-
-
-
